@@ -28,6 +28,14 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Query
                     return dbContext.Persons.Include(p => p.Farms).ThenInclude(pf => pf.Animals);
                 }
             );
+
+            Field<ListGraphType<FarmType>>(
+                "Farms",
+                resolve: context =>
+                {
+                    return dbContext.Farms.Include(f => f.Animals).Include(f => f.Person);
+                }
+            );
         }
     }
 }
