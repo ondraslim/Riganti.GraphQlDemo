@@ -1,15 +1,15 @@
-using HotChocolate;
-using HotChocolate.AspNetCore;
-using HotChocolate.Execution.Configuration;
+using GraphiQl;
+using GraphQL;
+using GraphQL.Server;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using RigantiGraphQlDemo.Api.GraphQL.Schema;
 using RigantiGraphQlDemo.Dal;
-using RigantiGraphQlDemoBasic.GraphQL;
-using System.Threading.Tasks;
 
-namespace RigantiGraphQlDemoBasic
+namespace RigantiGraphQlDemo.Api
 {
     public class Startup
     {
@@ -19,12 +19,17 @@ namespace RigantiGraphQlDemoBasic
         {
             services.AddDbContext<AnimalFarmDbContext>();
 
-            services.AddGraphQL(
-                SchemaBuilder.New()
-                    .AddQueryType<Query>()
-                    .Create(),
-                new QueryExecutionOptions {ForceSerialExecution = true}
-            );
+            services.AddScoped<IDependencyResolver>(s => new FuncDependencyResolver(s.GetRequiredService));
+            services.AddScoped<AppSchema>();
+            services
+                .AddGraphQL(o => { o.ExposeExceptions = false; })
+                .AddGraphTypes(ServiceLifetime.Scoped);
+
+            // If using Kestrel:
+            services.Configure<KestrelServerOptions>(options => { options.AllowSynchronousIO = true; });
+
+            // If using IIS:
+            services.Configure<IISServerOptions>(options => { options.AllowSynchronousIO = true; });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -35,20 +40,9 @@ namespace RigantiGraphQlDemoBasic
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseRouting();
-
             // add graph ql
-            app.UseGraphQL();
-            app.UsePlayground();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapGet("/", context =>
-                {
-                    context.Response.Redirect("/playground");
-                    return Task.CompletedTask;
-                });
-            });
+            app.UseGraphiQl("/graphql");
+            app.UseGraphQL<AppSchema>();
         }
     }
 }

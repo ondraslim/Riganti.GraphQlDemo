@@ -9,9 +9,6 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.7" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.7" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.7" />
-		<PackageReference Include="HotChocolate.Types.Filters" Version="10.5.2" />
-		<PackageReference Include="HotChocolate.Types.Sorting" Version="10.5.2" />
-		<PackageReference Include="HotChocolate.Types.Selections" Version="10.5.2" />
 
 	</ItemGroup>
 
