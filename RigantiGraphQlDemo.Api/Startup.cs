@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using GraphiQl;
 using GraphQL;
 using GraphQL.Server;
@@ -44,8 +45,18 @@ namespace RigantiGraphQlDemo.Api
             }
 
             // add graph ql
-            app.UseGraphiQl("/graphql");
+            app.UseGraphiQl("/GraphQL");
             app.UseGraphQL<ISchema>();
+
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapGet("/", context =>
+                {
+                    context.Response.Redirect("/GraphQL");
+                    return Task.CompletedTask;
+                });
+            });
         }
     }
 }
