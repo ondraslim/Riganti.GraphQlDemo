@@ -7,12 +7,7 @@ namespace RigantiGraphQlDemo.Dal
 {
     public class AnimalFarmDbContext : DbContext
     {
-        private readonly ILoggerFactory loggerFactory;
-
-        public AnimalFarmDbContext(ILoggerFactory loggerFactory)
-        {
-            this.loggerFactory = loggerFactory;
-        }
+        private readonly ILoggerFactory loggerFactory = LoggerFactory.Create(builder => { builder.AddDebug(); });
 
         public DbSet<Person> Persons { get; set; }
         public DbSet<Farm> Farms { get; set; }
