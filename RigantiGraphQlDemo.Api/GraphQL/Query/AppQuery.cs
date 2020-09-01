@@ -17,11 +17,11 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Query
                 resolve: context =>
                 {
                     var id = context.GetArgument<int>("id");
-                    return dbContext.Persons.Include(p => p.Farms).ThenInclude(pf => pf.Animals).FirstOrDefault();
+                    return dbContext.Persons.Include(p => p.Farms).ThenInclude(pf => pf.Animals).FirstOrDefault(p => p.Id == id);
                 }
             );
 
-            Field<PersonType>(
+            Field<ListGraphType<PersonType>>(
                 "Persons",
                 resolve: context =>
                 {

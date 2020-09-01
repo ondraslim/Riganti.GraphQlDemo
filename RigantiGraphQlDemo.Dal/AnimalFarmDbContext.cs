@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using RigantiGraphQlDemo.Dal.Entities;
+using RigantiGraphQlDemo.Dal.Extensions;
 
 namespace RigantiGraphQlDemo.Dal
 {
@@ -36,6 +37,9 @@ namespace RigantiGraphQlDemo.Dal
                 .HasMany(t => t.Animals)
                 .WithOne(t => t.Farm)
                 .HasForeignKey(t => t.FarmId);
+
+
+           modelBuilder.Seed();
         }
     }
 }

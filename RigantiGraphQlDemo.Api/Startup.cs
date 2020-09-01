@@ -1,6 +1,7 @@
 using GraphiQl;
 using GraphQL;
 using GraphQL.Server;
+using GraphQL.Types;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -19,8 +20,9 @@ namespace RigantiGraphQlDemo.Api
         {
             services.AddDbContext<AnimalFarmDbContext>();
 
-            services.AddScoped<IDependencyResolver>(s => new FuncDependencyResolver(s.GetRequiredService));
-            services.AddScoped<AppSchema>();
+            services.AddScoped<IDependencyResolver>(_ => new FuncDependencyResolver(_.GetRequiredService));
+
+            services.AddScoped<ISchema, AppSchema>();
             services
                 .AddGraphQL(o => { o.ExposeExceptions = false; })
                 .AddGraphTypes(ServiceLifetime.Scoped);
@@ -42,7 +44,7 @@ namespace RigantiGraphQlDemo.Api
 
             // add graph ql
             app.UseGraphiQl("/graphql");
-            app.UseGraphQL<AppSchema>();
+            app.UseGraphQL<ISchema>();
         }
     }
 }

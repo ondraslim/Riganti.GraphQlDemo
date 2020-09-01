@@ -12,6 +12,6 @@ namespace RigantiGraphQlDemo.Dal.Entities
         public string Name { get; set; }
         public string SecretPiggyBankLocation { get; set; }
 
-        public ICollection<Farm> Farms { get; set; }
+        public virtual ICollection<Farm> Farms { get; set; }
     }
 }
