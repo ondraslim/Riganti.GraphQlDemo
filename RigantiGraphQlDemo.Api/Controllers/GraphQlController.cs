@@ -9,31 +9,31 @@ using RigantiGraphQlDemo.Api.GraphQL.Query.Model;
 
 namespace RigantiGraphQlDemo.Api.Controllers
 {
-
-    [Route("graphql")]
-    [ApiController]
+    [Route("[controller]")]
     public class GraphQlController : Controller
     {
-        private readonly AnimalFarmDbContext db;
+        private readonly ISchema schema;
+        private readonly IDocumentExecuter documentExecutor;
 
-        public GraphQlController(AnimalFarmDbContext db) => this.db = db;
+        public GraphQlController(ISchema schema, IDocumentExecuter documentExecutor)
+        {
+            this.schema = schema;
+            this.documentExecutor = documentExecutor;
+        }
 
+        [HttpPost]
         public async Task<IActionResult> Post([FromBody] GraphQlQuery query)
         {
             var inputs = query.Variables.ToInputs();
-
-            var schema = new Schema
+            var executionOptions = new ExecutionOptions
             {
-                Query = new AppQuery(db)
+                Schema = schema,
+                Query = query.Query,
+                OperationName = query.OperationName,
+                Inputs = inputs
             };
 
-            var result = await new DocumentExecuter().ExecuteAsync(_ =>
-            {
-                _.Schema = schema;
-                _.Query = query.Query;
-                _.OperationName = query.OperationName;
-                _.Inputs = inputs;
-            });
+            var result = await documentExecutor.ExecuteAsync(executionOptions);
 
             if (result.Errors?.Count > 0)
             {

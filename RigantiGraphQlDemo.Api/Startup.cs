@@ -23,6 +23,7 @@ namespace RigantiGraphQlDemo.Api
             services.AddScoped<IDependencyResolver>(_ => new FuncDependencyResolver(_.GetRequiredService));
 
             services.AddScoped<ISchema, AppSchema>();
+            services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
             services
                 .AddGraphQL(o => { o.ExposeExceptions = false; })
                 .AddGraphTypes(ServiceLifetime.Scoped);
