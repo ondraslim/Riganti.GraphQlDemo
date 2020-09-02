@@ -16,17 +16,18 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Types
             Field<ListGraphType<FarmType>, IEnumerable<Farm>>()
                 .Name("Farms")
                 .Description("The farms of the Person.")
-                //.ResolveAsync(async ctx => await dataStore.GetFarmsByPersonIdAsync(ctx.Source.Id)); // TODO: N+1 problem
-            .ResolveAsync(ctx =>
-                {
-                    var farmLoader = 
-                        accessor.Context.GetOrAddCollectionBatchLoader<int, Farm>(
-                            "GetFarmsByPersonId", 
-                            dataStore.GetFarmsByPersonIdDataLoaderAsync);
-            
-                    return farmLoader.LoadAsync(ctx.Source.Id);
-                }
-            );
+                .ResolveAsync(async ctx => await dataStore.GetFarmsByPersonIdAsync(ctx.Source.Id)) // TODO: N+1 problem
+                // .ResolveAsync(ctx =>
+                //     {
+                //         var farmLoader =
+                //             accessor.Context.GetOrAddCollectionBatchLoader<int, Farm>(
+                //                 "GetFarmsByPersonId",
+                //                 dataStore.GetFarmsByPersonIdDataLoaderAsync);
+                //
+                //         return farmLoader.LoadAsync(ctx.Source.Id);
+                //     }
+                // )
+                ;
 
             // We do not want to expose SecretPiggyBankLocation
             //Field(x => x.SecretPiggyBankLocation).Description("The secret location of person's piggy bank. (should not be available!)");

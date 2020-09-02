@@ -15,13 +15,15 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Types
             Field<PersonType, Person>()
                 .Name("Person")
                 .Description("Farm's owner.")
-                .ResolveAsync(ctx =>
-                {
-                    var personLoader = accessor.Context.GetOrAddBatchLoader<int, Person>(
-                        "GetPersonById",
-                        dataStore.GetPersonsByIdDataLoaderAsync);
-                    return personLoader.LoadAsync(ctx.Source.PersonId);
-                });
+                .ResolveAsync(ctx => dataStore.GetPersonByIdAsync(ctx.Source.PersonId))
+                // .ResolveAsync(ctx =>
+                // {
+                //     var personLoader = accessor.Context.GetOrAddBatchLoader<int, Person>(
+                //         "GetPersonById",
+                //         dataStore.GetPersonsByIdDataLoaderAsync);
+                //     return personLoader.LoadAsync(ctx.Source.PersonId);
+                // })
+                ;
 
             Field(x => x.Animals, type: typeof(ListGraphType<AnimalType>)).Description("Farm's animals.");
         }
