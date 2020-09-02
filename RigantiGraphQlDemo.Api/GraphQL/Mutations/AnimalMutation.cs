@@ -2,78 +2,49 @@
 using GraphQL.Types;
 using RigantiGraphQlDemo.Api.GraphQL.InputTypes;
 using RigantiGraphQlDemo.Api.GraphQL.Types;
-using RigantiGraphQlDemo.Dal;
+using RigantiGraphQlDemo.Dal.DataStore;
 using RigantiGraphQlDemo.Dal.Entities;
-using System.Linq;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Mutations
 {
     public class AnimalMutation : ObjectGraphType
     {
-        public AnimalMutation(AnimalFarmDbContext dbContext)
+        public AnimalMutation(IDataStore dataStore)
         {
-            Field<AnimalType>(
-                "addAnimal",
-                arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<AnimalInputType>> {Name = "newAnimal"}),
-                resolve: context =>
+            Field<AnimalType>()
+                .Name("addAnimal")
+                .Argument<NonNullGraphType<AnimalInputType>>("newAnimal", "new animal data")
+                .ResolveAsync(async context =>
                 {
                     var animal = context.GetArgument<Animal>("newAnimal");
-                    var entry = dbContext.Add(animal);
-                    dbContext.SaveChanges();
+                    return await dataStore.CreateAnimalAsync(animal);
+                });
 
-                    return entry.Entity;
-                }
-            );
-
-            Field<AnimalType>(
-                "updateAnimal",
-                arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<IdGraphType>> {Name = "id"},
-                    new QueryArgument<NonNullGraphType<AnimalInputType>> {Name = "updateAnimal"}
-                ),
-                resolve: context =>
+            Field<AnimalType>()
+                .Name("updateAnimal")
+                .Argument<NonNullGraphType<IdGraphType>>("id", "id of Animal to update")
+                .Argument<NonNullGraphType<AnimalInputType>>("updateAnimal", "new animal data")
+                .ResolveAsync(async context =>
                 {
                     var animal = context.GetArgument<Animal>("updateAnimal");
                     var animalId = context.GetArgument<int>("id");
-
-                    var oldAnimal = dbContext.Animals.FirstOrDefault(a => a.Id == animalId);
-                    if (oldAnimal == default)
-                    {
+                    var updatedAnimal = await dataStore.UpdateAnimalAsync(animalId, animal);
+                    if (updatedAnimal == null)
                         context.Errors.Add(new ExecutionError($"Couldn't find any animal of id '{animalId}'."));
-                        return null;
-                    }
+                    return updatedAnimal;
+                });
 
-                    oldAnimal.Name = animal.Name;
-                    oldAnimal.Species = animal.Species;
-                    oldAnimal.FarmId = animal.FarmId;
-
-                    dbContext.SaveChanges();
-
-                    return oldAnimal;
-                }
-            );
-
-            Field<AnimalType>(
-                "deleteAnimal",
-                arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<IdGraphType>> {Name = "animalId"}),
-                resolve: context =>
+            Field<AnimalType>()
+                .Name("deleteAnimal")
+                .Argument<NonNullGraphType<IdGraphType>>("animalId", "id of Animal to remove")
+                .ResolveAsync(async context =>
                 {
                     var animalId = context.GetArgument<int>("animalId");
-                    var animal = dbContext.Animals.FirstOrDefault(a => a.Id == animalId);
-                    if (animal == default)
-                    {
+                    var updatedAnimal = await dataStore.DeleteAnimalAsync(animalId);
+                    if (updatedAnimal == null)
                         context.Errors.Add(new ExecutionError($"Couldn't find any animal of id '{animalId}'."));
-                        return null;
-                    }
-
-                    dbContext.Animals.Remove(animal);
-                    dbContext.SaveChanges();
-
-                    return animal;
-                }
-            );
+                    return updatedAnimal;
+                });
         }
     }
 }

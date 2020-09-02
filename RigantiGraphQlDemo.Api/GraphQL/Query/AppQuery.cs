@@ -1,41 +1,32 @@
 ﻿using GraphQL.Types;
-using Microsoft.EntityFrameworkCore;
 using RigantiGraphQlDemo.Api.GraphQL.Types;
-using RigantiGraphQlDemo.Dal;
-using System.Linq;
+using RigantiGraphQlDemo.Dal.DataStore;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Query
 {
     public class AppQuery : ObjectGraphType
     {
-        public AppQuery(AnimalFarmDbContext dbContext)
+        public AppQuery(IDataStore dataStore)
         {
-            Field<PersonType>(
-                "Person",
-                arguments: new QueryArguments(
-                    new QueryArgument<IdGraphType> {Name = "id", Description = "The ID of the Person."}),
-                resolve: context =>
+            Field<PersonType>()
+                .Name("Person")
+                .Description("Get Person by Id")
+                .Argument<IdGraphType>(Name = "id", Description = "The ID of the Person.")
+                .ResolveAsync(async context =>
                 {
                     var id = context.GetArgument<int>("id");
-                    return dbContext.Persons.Include(p => p.Farms).ThenInclude(pf => pf.Animals).FirstOrDefault(p => p.Id == id);
-                }
-            );
+                    return await dataStore.GetPersonByIdAsync(id);
+                });
 
-            Field<ListGraphType<PersonType>>(
-                "Persons",
-                resolve: context =>
-                {
-                    return dbContext.Persons.Include(p => p.Farms).ThenInclude(pf => pf.Animals);
-                }
-            );
+            Field<ListGraphType<PersonType>>()
+                .Name("Persons")
+                .Description("Get all Persons")
+                .ResolveAsync(async context => await dataStore.GetPersonsAsync());
 
-            Field<ListGraphType<FarmType>>(
-                "Farms",
-                resolve: context =>
-                {
-                    return dbContext.Farms.Include(f => f.Animals).Include(f => f.Person);
-                }
-            );
+            Field<ListGraphType<FarmType>>()
+                .Name("Farms")
+                .Description("Get all Farms")
+                .ResolveAsync(async context => await dataStore.GetFarmsAsync());
         }
     }
 }

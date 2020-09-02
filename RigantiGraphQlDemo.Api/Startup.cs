@@ -1,6 +1,6 @@
-using System.Threading.Tasks;
 using GraphiQl;
 using GraphQL;
+using GraphQL.DataLoader;
 using GraphQL.Server;
 using GraphQL.Types;
 using Microsoft.AspNetCore.Builder;
@@ -9,7 +9,10 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RigantiGraphQlDemo.Api.GraphQL.Schema;
+using RigantiGraphQlDemo.Api.Middleware;
 using RigantiGraphQlDemo.Dal;
+using RigantiGraphQlDemo.Dal.DataStore;
+using System.Threading.Tasks;
 
 namespace RigantiGraphQlDemo.Api
 {
@@ -20,14 +23,18 @@ namespace RigantiGraphQlDemo.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<AnimalFarmDbContext>();
+            services.AddScoped<IDataStore, DataStore>();
 
             services.AddScoped<IDependencyResolver>(_ => new FuncDependencyResolver(_.GetRequiredService));
 
             services.AddScoped<ISchema, AppSchema>();
             services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
             services
-                .AddGraphQL(o => { o.ExposeExceptions = false; })
+                .AddGraphQL(o => { o.ExposeExceptions = true; })
                 .AddGraphTypes(ServiceLifetime.Scoped);
+
+            services.AddSingleton<IDataLoaderContextAccessor, DataLoaderContextAccessor>();
+            services.AddSingleton<DataLoaderDocumentListener>();
 
             // If using Kestrel:
             services.Configure<KestrelServerOptions>(options => { options.AllowSynchronousIO = true; });
@@ -46,6 +53,8 @@ namespace RigantiGraphQlDemo.Api
 
             // add graph ql
             app.UseGraphiQl("/GraphQL");
+
+            app.UseMiddleware<GraphQlMiddleware>();
             app.UseGraphQL<ISchema>();
 
             app.UseRouting();
