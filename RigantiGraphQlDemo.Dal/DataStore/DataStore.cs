@@ -16,6 +16,7 @@ namespace RigantiGraphQlDemo.Dal.DataStore
             this.dbContext = dbContext;
         }
 
+        #region GET
         public async Task<IEnumerable<Person>> GetPersonsAsync()
         {
             return await dbContext.Persons.AsNoTracking().ToListAsync();
@@ -36,12 +37,9 @@ namespace RigantiGraphQlDemo.Dal.DataStore
             return await dbContext.Farms.Where(f => personId == f.PersonId).ToListAsync();
         }
 
-        public async Task<ILookup<int, Farm>> GetFarmsByPersonIdDataLoaderAsync(IEnumerable<int> personIds, CancellationToken token)
-        {
-            var farms = await dbContext.Farms.Where(f => personIds.Contains(f.PersonId)).ToListAsync(token);
-            return farms.ToLookup(f => f.PersonId);
-        }
+        #endregion
 
+        #region Mutate
         public async Task<Animal> CreateAnimalAsync(Animal animal)
         {
             var addedAnimal = await dbContext.Animals.AddAsync(animal);
@@ -72,5 +70,23 @@ namespace RigantiGraphQlDemo.Dal.DataStore
 
             return storedAnimal;
         }
+
+        #endregion
+
+
+        #region DataLoaders
+
+        public async Task<ILookup<int, Farm>> GetFarmsByPersonIdDataLoaderAsync(IEnumerable<int> personIds, CancellationToken token)
+        {
+            var farms = await dbContext.Farms.Where(f => personIds.Contains(f.PersonId)).ToListAsync(token);
+            return farms.ToLookup(f => f.PersonId);
+        }
+
+        public async Task<IDictionary<int, Person>> GetPersonsByIdDataLoaderAsync(IEnumerable<int> personIds, CancellationToken token)
+        {
+            return await dbContext.Persons.Where(p => personIds.Contains(p.Id)).ToDictionaryAsync(p => p.Id, token);
+        }
+
+        #endregion
     }
 }
