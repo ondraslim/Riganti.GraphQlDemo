@@ -148,7 +148,7 @@ Having a query variable animalUpdate:
 }
 ```
 
-**Sources:**
+###### Sources:
 
 * https://graphql-dotnet.github.io/docs/getting-started/introduction
 * https://graphql.org/learn/queries/
