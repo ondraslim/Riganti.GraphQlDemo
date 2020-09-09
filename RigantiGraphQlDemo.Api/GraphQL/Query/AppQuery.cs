@@ -1,6 +1,6 @@
 ﻿using GraphQL.Types;
 using RigantiGraphQlDemo.Api.GraphQL.Types;
-using RigantiGraphQlDemo.Dal.DataStore;
+using RigantiGraphQlDemo.Dal.DataStore.Common;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Query
 {

@@ -1,6 +1,7 @@
 ﻿using GraphQL;
 using RigantiGraphQlDemo.Api.GraphQL.Mutations;
 using RigantiGraphQlDemo.Api.GraphQL.Query;
+using RigantiGraphQlDemo.Api.GraphQL.Subscriptions;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Schema
 {
@@ -10,6 +11,7 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Schema
         {
             Query = resolver.Resolve<AppQuery>();
             Mutation = resolver.Resolve<AnimalMutation>();
+            Subscription = resolver.Resolve<AnimalSubscriptions>();
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using GraphQL.DataLoader;
 using GraphQL.Types;
-using RigantiGraphQlDemo.Dal.DataStore;
+using RigantiGraphQlDemo.Api.GraphQL.Types.AnimalTypes;
+using RigantiGraphQlDemo.Dal.DataStore.Common;
 using RigantiGraphQlDemo.Dal.Entities;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Types
@@ -15,15 +16,13 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Types
             Field<PersonType, Person>()
                 .Name("Person")
                 .Description("Farm's owner.")
-                .ResolveAsync(ctx => dataStore.GetPersonByIdAsync(ctx.Source.PersonId))
-                // .ResolveAsync(ctx =>
-                // {
-                //     var personLoader = accessor.Context.GetOrAddBatchLoader<int, Person>(
-                //         "GetPersonById",
-                //         dataStore.GetPersonsByIdDataLoaderAsync);
-                //     return personLoader.LoadAsync(ctx.Source.PersonId);
-                // })
-                ;
+                .ResolveAsync(ctx =>
+                {
+                    var personLoader = accessor.Context.GetOrAddBatchLoader<int, Person>(
+                        "GetPersonById",
+                        dataStore.GetPersonsByIdDataLoaderAsync);
+                    return personLoader.LoadAsync(ctx.Source.PersonId);
+                });
 
             Field(x => x.Animals, type: typeof(ListGraphType<AnimalType>)).Description("Farm's animals.");
         }

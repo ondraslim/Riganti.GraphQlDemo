@@ -11,8 +11,11 @@ using Microsoft.Extensions.Hosting;
 using RigantiGraphQlDemo.Api.GraphQL.Schema;
 using RigantiGraphQlDemo.Api.Middleware;
 using RigantiGraphQlDemo.Dal;
-using RigantiGraphQlDemo.Dal.DataStore;
+using RigantiGraphQlDemo.Dal.DataStore.Animal;
+using RigantiGraphQlDemo.Dal.DataStore.Common;
 using System.Threading.Tasks;
+using GraphQL.Server.Ui.Playground;
+using GraphQL.Server.Ui.Voyager;
 
 namespace RigantiGraphQlDemo.Api
 {
@@ -23,7 +26,9 @@ namespace RigantiGraphQlDemo.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<AnimalFarmDbContext>();
+
             services.AddScoped<IDataStore, DataStore>();
+            services.AddScoped<IAnimalDataStore, AnimalDataStore>();
 
             services.AddScoped<IDependencyResolver>(_ => new FuncDependencyResolver(_.GetRequiredService));
 
@@ -54,18 +59,22 @@ namespace RigantiGraphQlDemo.Api
             // add graph ql
             app.UseGraphiQl("/GraphQL");
 
-            app.UseMiddleware<GraphQlMiddleware>();
+            // Use the GraphQL subscriptions in the specified schema and make them available.
+
+            app.UseWebSockets();
+            app.UseGraphQLWebSockets<ISchema>();
+
+            //app.UseMiddleware<GraphQlMiddleware>();
             app.UseGraphQL<ISchema>();
 
+            // Add the GraphQL Playground UI to try out the GraphQL API at /
+            // Add the GraphQL Voyager UI to let you navigate your GraphQL API as a spider graph at /voyager.
+            app
+                .UseGraphQLPlayground(new GraphQLPlaygroundOptions{ Path = "/" })   
+                .UseGraphQLVoyager(new GraphQLVoyagerOptions{ Path = "/voyager" });
+            
+
             app.UseRouting();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapGet("/", context =>
-                {
-                    context.Response.Redirect("/GraphQL");
-                    return Task.CompletedTask;
-                });
-            });
         }
     }
 }

@@ -27,24 +27,33 @@ namespace RigantiGraphQlDemo.Api.Middleware
 
         public async Task InvokeAsync(HttpContext httpContext, ISchema schema, IServiceProvider serviceProvider)
         {
-            if (httpContext.Request.Path.StartsWithSegments("/graphql") && 
-                string.Equals(httpContext.Request.Method, "POST", StringComparison.OrdinalIgnoreCase))
+            if (httpContext.Request.Path.StartsWithSegments("/GraphQL"))
             {
-                using var streamReader = new StreamReader(httpContext.Request.Body);
-                var body = await streamReader.ReadToEndAsync();
+                ExecutionOptions options = new ExecutionOptions { Schema = schema };
 
-                //GraphQLRequest
-                var request = JsonConvert.DeserializeObject<GraphQlQuery>(body);
-
-                var result = await executor.ExecuteAsync(doc =>
+                if (string.Equals(httpContext.Request.Method, "POST", StringComparison.OrdinalIgnoreCase))
                 {
-                    doc.Schema = schema;
-                    doc.Query = request.Query;
-                    doc.OperationName = request.OperationName;
-                    doc.Inputs = request.Variables.ToInputs();
-                    doc.Listeners.Add(serviceProvider.GetRequiredService<DataLoaderDocumentListener>());
-                }).ConfigureAwait(false);
+                    using var streamReader = new StreamReader(httpContext.Request.Body);
+                    var body = await streamReader.ReadToEndAsync();
 
+                    //GraphQLRequest
+                    var request = JsonConvert.DeserializeObject<GraphQlQuery>(body);
+                    options.Query = request.Query;
+                    options.OperationName = request.OperationName;
+                    options.Inputs = request.Variables.ToInputs();
+                }
+                else if (string.Equals(httpContext.Request.Method, "GET", StringComparison.OrdinalIgnoreCase))
+                {
+                    var x = httpContext.Request.QueryString;
+                }
+                else
+                {
+                    await next(httpContext);
+                }
+
+                options.Listeners.Add(serviceProvider.GetRequiredService<DataLoaderDocumentListener>());
+                
+                var result = await executor.ExecuteAsync(options).ConfigureAwait(false);
                 var json = writer.Write(result);
                 await httpContext.Response.WriteAsync(json);
             }

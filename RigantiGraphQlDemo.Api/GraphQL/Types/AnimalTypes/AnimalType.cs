@@ -1,7 +1,7 @@
 ﻿using GraphQL.Types;
 using RigantiGraphQlDemo.Dal.Entities;
 
-namespace RigantiGraphQlDemo.Api.GraphQL.Types
+namespace RigantiGraphQlDemo.Api.GraphQL.Types.AnimalTypes
 {
     public class AnimalType : ObjectGraphType<Animal>
     {
