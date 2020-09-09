@@ -232,3 +232,11 @@ A sample server response to query PersonDetail looks like this:
   }
 }
 ```
+
+##### Sources:
+
+* https://graphql-dotnet.github.io/docs/getting-started/introduction
+* https://graphql.org/learn/
+* https://fullstackmark.com/post/17/building-a-graphql-api-with-aspnet-core-2-and-entity-framework-core
+* https://www.red-gate.com/simple-talk/dotnet/net-development/building-and-consuming-graphql-api-in-asp-net-core-3-1/
+* https://developer.okta.com/blog/2019/04/16/graphql-api-with-aspnetcore
