@@ -116,10 +116,16 @@ public class AppSchema : global::GraphQL.Types.Schema
 }
 ```
 
-This will make our query known and available to GrapQL. The constructor of `AppSchema` accepts *DependencyResolver* which we register using `ConfigureServices` in `Startup.cs`:
+This will make our query known and available to GrapQL. The constructor of `AppSchema` accepts *DependencyResolver* which we register using method `ConfigureServices` in `Startup.cs`:
 
 ```csharp
 services.AddScoped<IDependencyResolver>(_ => new FuncDependencyResolver(_.GetRequiredService));
+```
+
+ And we add the schema to our HTTP request pipeline in method `Configure()` in `Startup.cs`:
+
+```csharp
+app.UseGraphQL<ISchema>();;
 ```
 
 
