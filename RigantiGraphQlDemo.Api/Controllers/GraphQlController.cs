@@ -1,7 +1,10 @@
 ﻿using GraphQL;
+using GraphQL.DataLoader;
 using GraphQL.Types;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using RigantiGraphQlDemo.Api.GraphQL.Query.Model;
+using System;
 using System.Threading.Tasks;
 
 namespace RigantiGraphQlDemo.Api.Controllers

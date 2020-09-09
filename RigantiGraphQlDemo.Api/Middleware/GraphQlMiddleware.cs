@@ -9,9 +9,6 @@ using RigantiGraphQlDemo.Api.GraphQL.Query.Model;
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using GraphQL.Server.Transports.AspNetCore.Common;
-using Microsoft.EntityFrameworkCore.Design;
-using Newtonsoft.Json.Linq;
 
 namespace RigantiGraphQlDemo.Api.Middleware
 {
@@ -43,6 +40,7 @@ namespace RigantiGraphQlDemo.Api.Middleware
                 {
                     doc.Schema = schema;
                     doc.Query = request.Query;
+                    doc.OperationName = request.OperationName;
                     doc.Inputs = request.Variables.ToInputs();
                     doc.Listeners.Add(serviceProvider.GetRequiredService<DataLoaderDocumentListener>());
                 }).ConfigureAwait(false);
