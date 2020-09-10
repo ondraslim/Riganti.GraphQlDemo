@@ -2,20 +2,19 @@ using GraphiQl;
 using GraphQL;
 using GraphQL.DataLoader;
 using GraphQL.Server;
+using GraphQL.Server.Ui.Playground;
+using GraphQL.Server.Ui.Voyager;
 using GraphQL.Types;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RigantiGraphQlDemo.Api.GraphQL.Schema;
-using RigantiGraphQlDemo.Api.Middleware;
 using RigantiGraphQlDemo.Dal;
 using RigantiGraphQlDemo.Dal.DataStore.Animal;
 using RigantiGraphQlDemo.Dal.DataStore.Common;
-using System.Threading.Tasks;
-using GraphQL.Server.Ui.Playground;
-using GraphQL.Server.Ui.Voyager;
 
 namespace RigantiGraphQlDemo.Api
 {
@@ -36,6 +35,7 @@ namespace RigantiGraphQlDemo.Api
             services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
             services
                 .AddGraphQL(o => { o.ExposeExceptions = true; })
+                .AddWebSockets()
                 .AddGraphTypes(ServiceLifetime.Scoped);
 
             services.AddSingleton<IDataLoaderContextAccessor, DataLoaderContextAccessor>();
@@ -57,7 +57,7 @@ namespace RigantiGraphQlDemo.Api
             }
 
             // add graph ql
-            app.UseGraphiQl("/GraphQL");
+            app.UseGraphiQl("/GraphiQL");
 
             // Use the GraphQL subscriptions in the specified schema and make them available.
 
@@ -74,7 +74,6 @@ namespace RigantiGraphQlDemo.Api
                 .UseGraphQLVoyager(new GraphQLVoyagerOptions{ Path = "/voyager" });
             
 
-            app.UseRouting();
         }
     }
 }

@@ -29,7 +29,7 @@ namespace RigantiGraphQlDemo.Dal.DataStore.Common
 
         public async Task<IEnumerable<Farm>> GetFarmsAsync()
         {
-            return await dbContext.Farms.AsNoTracking().ToListAsync();
+            return await dbContext.Farms.Include(f => f.Animals).AsNoTracking().ToListAsync();
         }
 
         #endregion

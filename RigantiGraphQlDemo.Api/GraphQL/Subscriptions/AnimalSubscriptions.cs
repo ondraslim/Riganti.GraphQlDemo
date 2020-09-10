@@ -1,14 +1,15 @@
 ﻿using GraphQL.Resolvers;
+using GraphQL.Subscription;
 using GraphQL.Types;
 using RigantiGraphQlDemo.Api.GraphQL.Types.AnimalTypes;
 using RigantiGraphQlDemo.Dal.DataStore.Animal;
 using RigantiGraphQlDemo.Dal.Entities;
-using System.Collections.Generic;
+using System;
 using System.Reactive.Linq;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Subscriptions
 {
-    public sealed class AnimalSubscriptions : ObjectGraphType<object>
+    public class AnimalSubscriptions : ObjectGraphType<object>
     {
         public AnimalSubscriptions(IAnimalDataStore animalDataStore)
         {
@@ -22,21 +23,27 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Subscriptions
                     // I want to know, when my neighbor (opponent) gets a new animal
                     Description = "Subscribe to get updates when new animal is created in specific farms.",
                     Arguments = new QueryArguments(
-                        new QueryArgument<ListGraphType<IdGraphType>>
+                        new QueryArgument<IdGraphType>
                         {
-                            Name = "homeFarms"
+                            Name = "farm"
                         }),
                     Type = typeof(AnimalCreatedEvent),
-                    Resolver = new FuncFieldResolver<Animal>(context =>
-                        context.Source as Animal),
-                    Subscriber = new EventStreamResolver<Animal>(context =>
-                    {
-                        var homeFarms = context.GetArgument<List<int>>("homeFarms");
-                        return animalDataStore
-                            .WhenAnimalCreated
-                            .Where(x => homeFarms is null || homeFarms.Contains(x.FarmId));
-                    }),
+                    Resolver = new FuncFieldResolver<Animal>(ResolveAnimal),
+                    Subscriber = new EventStreamResolver<Animal>(ctx => Subscribe(ctx, animalDataStore)),
                 });
+        }
+
+        private Animal ResolveAnimal(ResolveFieldContext context)
+        {
+            return context.Source as Animal;
+        }
+
+        private IObservable<Animal> Subscribe(ResolveEventStreamContext context, IAnimalDataStore animalDataStore)
+        {
+            var homeFarms = context.GetArgument<int>("farm");
+            return animalDataStore
+                .WhenAnimalCreated
+                .Where(x => homeFarms == x.FarmId);
         }
     }
 }
