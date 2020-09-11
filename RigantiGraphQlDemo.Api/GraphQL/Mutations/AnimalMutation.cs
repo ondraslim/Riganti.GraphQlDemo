@@ -1,7 +1,6 @@
 ﻿using GraphQL;
 using GraphQL.Types;
 using RigantiGraphQlDemo.Api.GraphQL.InputTypes;
-using RigantiGraphQlDemo.Api.GraphQL.Types;
 using RigantiGraphQlDemo.Api.GraphQL.Types.AnimalTypes;
 using RigantiGraphQlDemo.Dal.DataStore.Animal;
 using RigantiGraphQlDemo.Dal.Entities;

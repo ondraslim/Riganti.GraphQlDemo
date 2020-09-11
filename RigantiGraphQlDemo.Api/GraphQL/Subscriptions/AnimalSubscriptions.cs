@@ -9,7 +9,7 @@ using System.Reactive.Linq;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Subscriptions
 {
-    public class AnimalSubscriptions : ObjectGraphType<object>
+    public class AnimalSubscriptions : ObjectGraphType
     {
         public AnimalSubscriptions(IAnimalDataStore animalDataStore)
         {
@@ -40,10 +40,11 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Subscriptions
 
         private IObservable<Animal> Subscribe(ResolveEventStreamContext context, IAnimalDataStore animalDataStore)
         {
-            var homeFarms = context.GetArgument<int>("farm");
+            var farm = context.GetArgument<int>("farm");
+
             return animalDataStore
-                .WhenAnimalCreated
-                .Where(x => homeFarms == x.FarmId);
+                .AnimalCreated
+                .Where(x => farm == x.FarmId);
         }
     }
 }

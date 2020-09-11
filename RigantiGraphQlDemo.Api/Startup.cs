@@ -6,12 +6,12 @@ using GraphQL.Server.Ui.Playground;
 using GraphQL.Server.Ui.Voyager;
 using GraphQL.Types;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RigantiGraphQlDemo.Api.GraphQL.Schema;
+using RigantiGraphQlDemo.Api.Middleware;
 using RigantiGraphQlDemo.Dal;
 using RigantiGraphQlDemo.Dal.DataStore.Animal;
 using RigantiGraphQlDemo.Dal.DataStore.Common;
@@ -24,19 +24,19 @@ namespace RigantiGraphQlDemo.Api
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AnimalFarmDbContext>();
+            services.AddDbContext<AnimalFarmDbContext>(ServiceLifetime.Singleton);
 
-            services.AddScoped<IDataStore, DataStore>();
-            services.AddScoped<IAnimalDataStore, AnimalDataStore>();
+            services.AddSingleton<IDataStore, DataStore>();
+            services.AddSingleton<IAnimalDataStore, AnimalDataStore>();
 
-            services.AddScoped<IDependencyResolver>(_ => new FuncDependencyResolver(_.GetRequiredService));
+            services.AddSingleton<IDependencyResolver>(_ => new FuncDependencyResolver(_.GetRequiredService));
 
-            services.AddScoped<ISchema, AppSchema>();
+            services.AddSingleton<ISchema, AppSchema>();
             services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
             services
                 .AddGraphQL(o => { o.ExposeExceptions = true; })
-                .AddWebSockets()
-                .AddGraphTypes(ServiceLifetime.Scoped);
+                .AddGraphTypes()
+                .AddWebSockets();
 
             services.AddSingleton<IDataLoaderContextAccessor, DataLoaderContextAccessor>();
             services.AddSingleton<DataLoaderDocumentListener>();
@@ -64,7 +64,7 @@ namespace RigantiGraphQlDemo.Api
             app.UseWebSockets();
             app.UseGraphQLWebSockets<ISchema>();
 
-            //app.UseMiddleware<GraphQlMiddleware>();
+            app.UseMiddleware<GraphQlMiddleware>();
             app.UseGraphQL<ISchema>();
 
             // Add the GraphQL Playground UI to try out the GraphQL API at /

@@ -10,13 +10,14 @@ namespace RigantiGraphQlDemo.Dal.DataStore.Animal
     {
         private readonly AnimalFarmDbContext dbContext; 
         
-        private readonly Subject<Entities.Animal> whenAnimalCreated;
-        public IObservable<Entities.Animal> WhenAnimalCreated => whenAnimalCreated.AsObservable();
+
+        private readonly Subject<Entities.Animal> animalCreated;
+        public IObservable<Entities.Animal> AnimalCreated => animalCreated.AsObservable();
 
 
         public AnimalDataStore(AnimalFarmDbContext dbContext)
         {
-            whenAnimalCreated = new Subject<Entities.Animal>();
+            animalCreated = new Subject<Entities.Animal>();
             this.dbContext = dbContext;
         }
 
@@ -27,7 +28,7 @@ namespace RigantiGraphQlDemo.Dal.DataStore.Animal
             var addedAnimal = await dbContext.Animals.AddAsync(animal);
             await dbContext.SaveChangesAsync();
 
-            whenAnimalCreated.OnNext(addedAnimal.Entity);
+            animalCreated.OnNext(animal);
             return addedAnimal.Entity;
         }
         public async Task<Entities.Animal> UpdateAnimalAsync(int animalId, Entities.Animal animal)
@@ -59,7 +60,7 @@ namespace RigantiGraphQlDemo.Dal.DataStore.Animal
         public void Dispose()
         {
             dbContext?.Dispose();
-            whenAnimalCreated?.Dispose();
+            animalCreated?.Dispose();
         }
     }
 }
