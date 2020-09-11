@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RigantiGraphQlDemo.Api", "R
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GraphQl", "GraphQl", "{C74CDE14-B52C-46C9-9A9B-1CEB780DFA59}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RigantiGraphQlDemo.Client", "RigantiGraphQlDemo.Client\RigantiGraphQlDemo.Client.csproj", "{DDD27713-70FB-46FE-BFED-F907FC93830C}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,10 +25,6 @@ Global
 		{288D8ECF-5C6A-4B30-804E-643E35ADEF51}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{288D8ECF-5C6A-4B30-804E-643E35ADEF51}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{288D8ECF-5C6A-4B30-804E-643E35ADEF51}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DDD27713-70FB-46FE-BFED-F907FC93830C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DDD27713-70FB-46FE-BFED-F907FC93830C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DDD27713-70FB-46FE-BFED-F907FC93830C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DDD27713-70FB-46FE-BFED-F907FC93830C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -38,7 +32,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{FD38A0CC-07E5-4F91-B84D-1E90336449E4} = {A7B56C8D-8FE6-4505-B385-4D4319CEF79E}
 		{288D8ECF-5C6A-4B30-804E-643E35ADEF51} = {C74CDE14-B52C-46C9-9A9B-1CEB780DFA59}
-		{DDD27713-70FB-46FE-BFED-F907FC93830C} = {C74CDE14-B52C-46C9-9A9B-1CEB780DFA59}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EF5BE7F6-1F75-491B-A562-C55598676C5F}
