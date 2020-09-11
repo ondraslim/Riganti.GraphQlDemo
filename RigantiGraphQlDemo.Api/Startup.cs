@@ -29,13 +29,13 @@ namespace RigantiGraphQlDemo.Api
             services.AddSingleton<IDataStore, DataStore>();
             services.AddSingleton<IAnimalDataStore, AnimalDataStore>();
 
-            services.AddSingleton<IDependencyResolver>(_ => new FuncDependencyResolver(_.GetRequiredService));
+            services.AddScoped<IDependencyResolver>(_ => new FuncDependencyResolver(_.GetRequiredService));
 
-            services.AddSingleton<ISchema, AppSchema>();
+            services.AddScoped<ISchema, AppSchema>();
             services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
             services
                 .AddGraphQL(o => { o.ExposeExceptions = true; })
-                .AddGraphTypes()
+                .AddGraphTypes(ServiceLifetime.Scoped)
                 .AddWebSockets();
 
             services.AddSingleton<IDataLoaderContextAccessor, DataLoaderContextAccessor>();
