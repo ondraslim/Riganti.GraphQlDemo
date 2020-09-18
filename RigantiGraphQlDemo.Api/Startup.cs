@@ -35,11 +35,10 @@ namespace RigantiGraphQlDemo.Api
             services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
             services
                 .AddGraphQL(o => { o.ExposeExceptions = true; })
+                .AddDataLoader()
                 .AddGraphTypes(ServiceLifetime.Scoped)
                 .AddWebSockets();
 
-            services.AddSingleton<IDataLoaderContextAccessor, DataLoaderContextAccessor>();
-            services.AddSingleton<DataLoaderDocumentListener>();
 
             // If using Kestrel:
             services.Configure<KestrelServerOptions>(options => { options.AllowSynchronousIO = true; });
@@ -60,7 +59,6 @@ namespace RigantiGraphQlDemo.Api
             app.UseGraphiQl("/GraphiQL");
 
             // Use the GraphQL subscriptions in the specified schema and make them available.
-
             app.UseWebSockets();
             app.UseGraphQLWebSockets<ISchema>();
 
