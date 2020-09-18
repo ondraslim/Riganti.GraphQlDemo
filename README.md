@@ -74,7 +74,7 @@ To overcome this problem, we can use a `DataLoader`. They help in two ways:
 
 ###### DataLoader - Middleware
 
-Lets create our own GraphQL middleware class `GraphQlMiddleware`, which will add a `DataLoaderDocumentListener` to the query exection options:
+Lets create our own GraphQL middleware class `GraphQlMiddleware`, which will add a `IDocumentExecutionListener` to the query exection options:
 
 ```csharp
 public class GraphQlMiddleware
@@ -107,7 +107,7 @@ public class GraphQlMiddleware
                 doc.Query = request.Query;
                 doc.OperationName = request.OperationName;
                 doc.Inputs = request.Variables.ToInputs();
-                doc.Listeners.Add(serviceProvider.GetRequiredService<DataLoaderDocumentListener>());
+                doc.Listeners.Add(serviceProvider.GetRequiredService<IDocumentExecutionListener>());
             }).ConfigureAwait(false);
 
             var json = writer.Write(result);
@@ -121,11 +121,13 @@ public class GraphQlMiddleware
 }
 ```
 
-We need to register `IDataLoaderContextAccessor` and `DataLoaderDocumentListener` in our IoC container:
+We need to register `IDataLoaderContextAccessor` and `IDocumentExecutionListener` in our IoC container. This can be done using `IGraphQLBuilder` extension method `AddWebSockets()` in method `ConfigureServices()` of `Startup.cs`:
 
 ```csharp
-services.AddSingleton<IDataLoaderContextAccessor, DataLoaderContextAccessor>();
-services.AddSingleton<DataLoaderDocumentListener>();
+ services
+	.AddGraphQL(o => { o.ExposeExceptions = true; })
+	.AddDataLoader()
+        .AddGraphTypes(ServiceLifetime.Scoped);
 ```
 
 ###### DataLoader - usage
