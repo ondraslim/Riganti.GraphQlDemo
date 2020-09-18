@@ -1,15 +1,20 @@
 using GraphiQl;
 using GraphQL;
-using GraphQL.DataLoader;
 using GraphQL.Server;
+using GraphQL.Server.Authorization.AspNetCore;
 using GraphQL.Server.Ui.Playground;
 using GraphQL.Server.Ui.Voyager;
 using GraphQL.Types;
+using GraphQL.Validation;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using RigantiGraphQlDemo.Api.Configuration;
+using RigantiGraphQlDemo.Api.GraphQL.Mutations;
 using RigantiGraphQlDemo.Api.GraphQL.Schema;
 using RigantiGraphQlDemo.Api.Middleware;
 using RigantiGraphQlDemo.Dal;
@@ -29,15 +34,36 @@ namespace RigantiGraphQlDemo.Api
             services.AddSingleton<IDataStore, DataStore>();
             services.AddSingleton<IAnimalDataStore, AnimalDataStore>();
 
-            services.AddScoped<IDependencyResolver>(_ => new FuncDependencyResolver(_.GetRequiredService));
+            services.AddSingleton<IDependencyResolver>(_ => new FuncDependencyResolver(_.GetRequiredService));
 
-            services.AddScoped<ISchema, AppSchema>();
+            services.AddSingleton<ISchema, AppSchema>();
             services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
+
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            services
+                .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(o => { o.Cookie.Name = "graph-auth"; });
+
+
+
+            services
+                .AddTransient<IValidationRule, AuthorizationValidationRule>()
+                .AddAuthorization(options =>
+                {
+                    options.AddPolicy(Policies.LoggedIn, p => p.RequireAuthenticatedUser());
+                    options.AddPolicy(Policies.Admin, p => p.RequireAssertion(f => false));
+                });
+
+
             services
                 .AddGraphQL(o => { o.ExposeExceptions = true; })
                 .AddDataLoader()
-                .AddGraphTypes(ServiceLifetime.Scoped)
+                .AddGraphTypes()
                 .AddWebSockets();
+
+            services.AddSingleton<IMutation, LoginMutation>();
+            services.AddSingleton<IMutation, AnimalMutation>();
 
 
             // If using Kestrel:

@@ -1,5 +1,7 @@
 ﻿using GraphQL;
+using GraphQL.Server.Authorization.AspNetCore;
 using GraphQL.Types;
+using RigantiGraphQlDemo.Api.Configuration;
 using RigantiGraphQlDemo.Api.GraphQL.InputTypes;
 using RigantiGraphQlDemo.Api.GraphQL.Types.AnimalTypes;
 using RigantiGraphQlDemo.Dal.DataStore.Animal;
@@ -7,10 +9,13 @@ using RigantiGraphQlDemo.Dal.Entities;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Mutations
 {
-    public class AnimalMutation : ObjectGraphType
+    public class AnimalMutation : ObjectGraphType, IMutation
     {
         public AnimalMutation(IAnimalDataStore animalDataStore)
         {
+            // authorize all mutations
+            this.AuthorizeWith(Policies.LoggedIn);
+
             Field<AnimalType>()
                 .Name("addAnimal")
                 .Argument<NonNullGraphType<AnimalInputType>>("newAnimal", "new animal data")

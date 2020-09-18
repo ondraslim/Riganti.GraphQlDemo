@@ -1,5 +1,7 @@
 ﻿using GraphQL.DataLoader;
+using GraphQL.Server.Authorization.AspNetCore;
 using GraphQL.Types;
+using RigantiGraphQlDemo.Api.Configuration;
 using RigantiGraphQlDemo.Dal.DataStore.Common;
 using RigantiGraphQlDemo.Dal.Entities;
 using System.Collections.Generic;
@@ -15,6 +17,7 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Types
             Field<ListGraphType<FarmType>, IEnumerable<Farm>>()
                 .Name("Farms")
                 .Description("The farms of the Person.")
+                .AuthorizeWith(Policies.LoggedIn)
                 .ResolveAsync(ctx =>
                     {
                         var farmLoader =
@@ -26,8 +29,9 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Types
                     }
                 );
 
-            // We do not want to expose SecretPiggyBankLocation
-            //Field(x => x.SecretPiggyBankLocation).Description("The secret location of person's piggy bank. (should not be available!)");
+            Field(x => x.SecretPiggyBankLocation)
+                .Description("The secret location of person's piggy bank. (should not be available!)")
+                .AuthorizeWith(Policies.Admin);
         }
     }
 }

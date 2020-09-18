@@ -10,7 +10,7 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Schema
         public AppSchema(IDependencyResolver resolver) : base(resolver)
         {
             Query = resolver.Resolve<AppQuery>();
-            Mutation = resolver.Resolve<AnimalMutation>();
+            Mutation = resolver.Resolve<RootMutation>();
             Subscription = resolver.Resolve<AnimalSubscriptions>();
         }
     }
