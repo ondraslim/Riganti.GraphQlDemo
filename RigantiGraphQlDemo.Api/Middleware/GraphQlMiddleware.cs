@@ -1,5 +1,5 @@
 ﻿using GraphQL;
-using GraphQL.DataLoader;
+using GraphQL.Execution;
 using GraphQL.Http;
 using GraphQL.Types;
 using Microsoft.AspNetCore.Http;
@@ -42,7 +42,7 @@ namespace RigantiGraphQlDemo.Api.Middleware
                     doc.Query = request.Query;
                     doc.OperationName = request.OperationName;
                     doc.Inputs = request.Variables.ToInputs();
-                    doc.Listeners.Add(serviceProvider.GetRequiredService<DataLoaderDocumentListener>());
+                    doc.Listeners.Add(serviceProvider.GetRequiredService<IDocumentExecutionListener>());
                 }).ConfigureAwait(false);
 
                 var json = writer.Write(result);

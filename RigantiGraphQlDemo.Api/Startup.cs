@@ -31,10 +31,9 @@ namespace RigantiGraphQlDemo.Api
             services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
             services
                 .AddGraphQL(o => { o.ExposeExceptions = true; })
+                .AddDataLoader()
                 .AddGraphTypes(ServiceLifetime.Scoped);
 
-            services.AddSingleton<IDataLoaderContextAccessor, DataLoaderContextAccessor>();
-            services.AddSingleton<DataLoaderDocumentListener>();
 
             // If using Kestrel:
             services.Configure<KestrelServerOptions>(options => { options.AllowSynchronousIO = true; });
