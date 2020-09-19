@@ -1,4 +1,5 @@
-﻿using GraphQL.Resolvers;
+﻿using GraphQL;
+using GraphQL.Resolvers;
 using GraphQL.Subscription;
 using GraphQL.Types;
 using RigantiGraphQlDemo.Api.GraphQL.Types.AnimalTypes;
@@ -13,7 +14,7 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Subscriptions
     {
         public AnimalSubscriptions(IAnimalDataStore animalDataStore)
         {
-            Name = "Animal Subscription";
+            Name = "AnimalSubscription";
             Description = "The subscription type, represents all updates can be pushed to the client in real time over web sockets.";
 
             AddField(
@@ -33,12 +34,12 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Subscriptions
                 });
         }
 
-        private Animal ResolveAnimal(ResolveFieldContext context)
+        private Animal ResolveAnimal(IResolveFieldContext context)
         {
             return context.Source as Animal;
         }
 
-        private IObservable<Animal> Subscribe(ResolveEventStreamContext context, IAnimalDataStore animalDataStore)
+        private IObservable<Animal> Subscribe(IResolveEventStreamContext context, IAnimalDataStore animalDataStore)
         {
             var farm = context.GetArgument<int>("farm");
 

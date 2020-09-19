@@ -10,12 +10,19 @@ namespace RigantiGraphQlDemo.Api.Configuration
         public static ComplexityConfiguration ComplexityConfiguration =>
             new ComplexityConfiguration
             {
-                MaxDepth = 3,                   // Nested types in query
-                FieldImpact = 5,                // average number of records in db
-                MaxComplexity = 1_000           // max amount of returned entities in a query
+                MaxDepth = 3, // Nested types in query
+                FieldImpact = 5, // average number of records in db
+                MaxComplexity = 1_000 // max amount of returned entities in a query
             };
 
-        public static ClaimsPrincipal FakedUser => new ClaimsPrincipal(
+        public static GraphQlUserContext FakedUserContext =>
+            new GraphQlUserContext
+            {
+                { "name", "Jon Doe" },
+                {"role", Roles.UserRole }
+            };
+
+        public static ClaimsPrincipal FakedUserClaims => new ClaimsPrincipal(
             new ClaimsIdentity(new List<Claim>
             {
                 new Claim(ClaimTypes.Name, "Jon Doe"),

@@ -1,4 +1,5 @@
-﻿using GraphQL.Types;
+﻿using GraphQL;
+using GraphQL.Types;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using RigantiGraphQlDemo.Api.GraphQL.Authentication;

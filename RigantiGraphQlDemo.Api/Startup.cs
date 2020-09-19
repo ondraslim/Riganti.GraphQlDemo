@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Security.Claims;
 using GraphiQl;
 using GraphQL;
 using GraphQL.Server;
@@ -9,7 +7,6 @@ using GraphQL.Server.Ui.Voyager;
 using GraphQL.Types;
 using GraphQL.Validation;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -20,10 +17,11 @@ using RigantiGraphQlDemo.Api.Configuration;
 using RigantiGraphQlDemo.Api.Configuration.Auth;
 using RigantiGraphQlDemo.Api.GraphQL.Mutations;
 using RigantiGraphQlDemo.Api.GraphQL.Schema;
-using RigantiGraphQlDemo.Api.Middleware;
 using RigantiGraphQlDemo.Dal;
 using RigantiGraphQlDemo.Dal.DataStore.Animal;
 using RigantiGraphQlDemo.Dal.DataStore.Common;
+using System;
+using System.Security.Claims;
 
 namespace RigantiGraphQlDemo.Api
 {
@@ -37,9 +35,7 @@ namespace RigantiGraphQlDemo.Api
 
             services.AddSingleton<IDataStore, DataStore>();
             services.AddSingleton<IAnimalDataStore, AnimalDataStore>();
-
-            services.AddSingleton<IDependencyResolver>(_ => new FuncDependencyResolver(_.GetRequiredService));
-
+            
             services.AddSingleton<ISchema, AppSchema>();
             services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
 
@@ -60,14 +56,23 @@ namespace RigantiGraphQlDemo.Api
             services
                 .AddGraphQL(o =>
                 {
-                    o.ExposeExceptions = true;
                     o.ComplexityConfiguration = GraphQlConfig.ComplexityConfiguration;
                     o.EnableMetrics = true;
+                    o.UnhandledExceptionDelegate = ctx => Console.WriteLine($"Error occured: {ctx.OriginalException.Message}");
                 })
                 .AddDataLoader()
                 .AddGraphTypes()
-                .AddUserContextBuilder(o => o.User = GraphQlConfig.FakedUser)
+                .AddUserContextBuilder(o =>
+                {
+                    o.User = GraphQlConfig.FakedUserClaims;
+                    return GraphQlConfig.FakedUserContext;
+                })
+                // Add required services for de/serialization
+                .AddSystemTextJson(deserializerSettings => { }, serializerSettings => { })
+                .AddErrorInfoProvider(opt => opt.ExposeExceptionStackTrace = true )
+
                 .AddWebSockets();
+
 
             services.AddSingleton<IMutation, LoginMutation>();
             services.AddSingleton<IMutation, AnimalMutation>();
@@ -90,7 +95,6 @@ namespace RigantiGraphQlDemo.Api
             // Use the GraphQL subscriptions in the specified schema and make them available.
             app.UseWebSockets();
 
-            app.UseMiddleware<GraphQlMiddleware>();
             app.UseGraphQL<ISchema>();  
             app.UseAuthentication()
                 .UseAuthorization();
@@ -99,7 +103,6 @@ namespace RigantiGraphQlDemo.Api
             app.UseGraphiQl("/GraphiQL");
 
             app.UseGraphQLWebSockets<ISchema>();
-
 
             // Add the GraphQL Playground UI to try out the GraphQL API at /
             // Add the GraphQL Voyager UI to let you navigate your GraphQL API as a spider graph at /voyager.
