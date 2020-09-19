@@ -15,7 +15,7 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Mutations
         public LoginMutation(IHttpContextAccessor contextAccessor)
         {
             FieldAsync<SessionType>(
-                "sessions",
+                "session",
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "password" }),
                 resolve: async context =>
@@ -26,7 +26,7 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Mutations
                     if (password != DemoUserPassword && password != DemoAdminPassword)
                         return new Session { IsLoggedIn = false, IsAdmin = false };
 
-                    var principal = new ClaimsPrincipal(new ClaimsIdentity("Cookie"));
+                    var principal = new ClaimsPrincipal(new ClaimsIdentity("graph-auth"));
                     await contextAccessor.HttpContext.SignInAsync(principal, new AuthenticationProperties
                     {
                         ExpiresUtc = DateTime.UtcNow.AddMonths(6),

@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Security.Claims;
 using GraphiQl;
 using GraphQL;
 using GraphQL.Server;
@@ -7,13 +9,14 @@ using GraphQL.Server.Ui.Voyager;
 using GraphQL.Types;
 using GraphQL.Validation;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using RigantiGraphQlDemo.Api.Configuration;
+using RigantiGraphQlDemo.Api.Auth;
 using RigantiGraphQlDemo.Api.GraphQL.Mutations;
 using RigantiGraphQlDemo.Api.GraphQL.Schema;
 using RigantiGraphQlDemo.Api.Middleware;
@@ -45,14 +48,12 @@ namespace RigantiGraphQlDemo.Api
                 .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(o => { o.Cookie.Name = "graph-auth"; });
 
-
-
             services
                 .AddTransient<IValidationRule, AuthorizationValidationRule>()
                 .AddAuthorization(options =>
                 {
-                    options.AddPolicy(Policies.LoggedIn, p => p.RequireAuthenticatedUser());
-                    options.AddPolicy(Policies.Admin, p => p.RequireAssertion(f => false));
+                    options.AddPolicy(Policies.LoggedIn, p => p.RequireRole(Roles.UserRole));
+                    options.AddPolicy(Policies.Admin, p => p.RequireRole(Roles.AdminRole));
                 });
 
 
@@ -60,6 +61,13 @@ namespace RigantiGraphQlDemo.Api
                 .AddGraphQL(o => { o.ExposeExceptions = true; })
                 .AddDataLoader()
                 .AddGraphTypes()
+                .AddUserContextBuilder(o => o.User =
+                    new ClaimsPrincipal(
+                        new ClaimsIdentity(new List<Claim>
+                        {
+                            new Claim(ClaimTypes.Name, "Jon Doe"),
+                            new Claim(ClaimTypes.Role, Roles.UserRole)
+                        })))
                 .AddWebSockets();
 
             services.AddSingleton<IMutation, LoginMutation>();
@@ -80,23 +88,28 @@ namespace RigantiGraphQlDemo.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+            // Use the GraphQL subscriptions in the specified schema and make them available.
+            app.UseWebSockets();
+
+            app.UseGraphQL<ISchema>()
+                .UseAuthentication()
+                .UseAuthorization();
+
+            app.UseMiddleware<GraphQlMiddleware>();
+
 
             // add graph ql
             app.UseGraphiQl("/GraphiQL");
 
-            // Use the GraphQL subscriptions in the specified schema and make them available.
-            app.UseWebSockets();
             app.UseGraphQLWebSockets<ISchema>();
 
-            app.UseMiddleware<GraphQlMiddleware>();
-            app.UseGraphQL<ISchema>();
 
             // Add the GraphQL Playground UI to try out the GraphQL API at /
             // Add the GraphQL Voyager UI to let you navigate your GraphQL API as a spider graph at /voyager.
             app
-                .UseGraphQLPlayground(new GraphQLPlaygroundOptions{ Path = "/" })   
-                .UseGraphQLVoyager(new GraphQLVoyagerOptions{ Path = "/voyager" });
-            
+                .UseGraphQLPlayground(new GraphQLPlaygroundOptions { Path = "/" })
+                .UseGraphQLVoyager(new GraphQLVoyagerOptions { Path = "/voyager" });
+
 
         }
     }

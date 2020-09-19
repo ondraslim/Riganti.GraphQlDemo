@@ -42,10 +42,6 @@ namespace RigantiGraphQlDemo.Api.Middleware
                     options.OperationName = request.OperationName;
                     options.Inputs = request.Variables.ToInputs();
                 }
-                else if (string.Equals(httpContext.Request.Method, "GET", StringComparison.OrdinalIgnoreCase))
-                {
-                    var x = httpContext.Request.QueryString;
-                }
                 else
                 {
                     await next(httpContext);

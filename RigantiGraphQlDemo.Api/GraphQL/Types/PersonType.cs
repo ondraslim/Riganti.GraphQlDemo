@@ -1,10 +1,10 @@
 ﻿using GraphQL.DataLoader;
 using GraphQL.Server.Authorization.AspNetCore;
 using GraphQL.Types;
-using RigantiGraphQlDemo.Api.Configuration;
 using RigantiGraphQlDemo.Dal.DataStore.Common;
 using RigantiGraphQlDemo.Dal.Entities;
 using System.Collections.Generic;
+using RigantiGraphQlDemo.Api.Auth;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Types
 {
