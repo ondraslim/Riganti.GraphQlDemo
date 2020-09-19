@@ -4,7 +4,7 @@ using GraphQL.Types;
 using RigantiGraphQlDemo.Dal.DataStore.Common;
 using RigantiGraphQlDemo.Dal.Entities;
 using System.Collections.Generic;
-using RigantiGraphQlDemo.Api.Auth;
+using RigantiGraphQlDemo.Api.Configuration.Auth;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Types
 {

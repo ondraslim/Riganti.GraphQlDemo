@@ -16,7 +16,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using RigantiGraphQlDemo.Api.Auth;
+using RigantiGraphQlDemo.Api.Configuration;
+using RigantiGraphQlDemo.Api.Configuration.Auth;
 using RigantiGraphQlDemo.Api.GraphQL.Mutations;
 using RigantiGraphQlDemo.Api.GraphQL.Schema;
 using RigantiGraphQlDemo.Api.Middleware;
@@ -56,18 +57,16 @@ namespace RigantiGraphQlDemo.Api
                     options.AddPolicy(Policies.Admin, p => p.RequireRole(Roles.AdminRole));
                 });
 
-
             services
-                .AddGraphQL(o => { o.ExposeExceptions = true; })
+                .AddGraphQL(o =>
+                {
+                    o.ExposeExceptions = true;
+                    o.ComplexityConfiguration = GraphQlConfig.ComplexityConfiguration;
+                    o.EnableMetrics = true;
+                })
                 .AddDataLoader()
                 .AddGraphTypes()
-                .AddUserContextBuilder(o => o.User =
-                    new ClaimsPrincipal(
-                        new ClaimsIdentity(new List<Claim>
-                        {
-                            new Claim(ClaimTypes.Name, "Jon Doe"),
-                            new Claim(ClaimTypes.Role, Roles.UserRole)
-                        })))
+                .AddUserContextBuilder(o => o.User = GraphQlConfig.FakedUser)
                 .AddWebSockets();
 
             services.AddSingleton<IMutation, LoginMutation>();
@@ -91,12 +90,10 @@ namespace RigantiGraphQlDemo.Api
             // Use the GraphQL subscriptions in the specified schema and make them available.
             app.UseWebSockets();
 
-            app.UseGraphQL<ISchema>()
-                .UseAuthentication()
-                .UseAuthorization();
-
             app.UseMiddleware<GraphQlMiddleware>();
-
+            app.UseGraphQL<ISchema>();  
+            app.UseAuthentication()
+                .UseAuthorization();
 
             // add graph ql
             app.UseGraphiQl("/GraphiQL");
@@ -109,8 +106,6 @@ namespace RigantiGraphQlDemo.Api
             app
                 .UseGraphQLPlayground(new GraphQLPlaygroundOptions { Path = "/" })
                 .UseGraphQLVoyager(new GraphQLVoyagerOptions { Path = "/voyager" });
-
-
         }
     }
 }

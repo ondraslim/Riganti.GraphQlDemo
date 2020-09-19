@@ -1,4 +1,4 @@
-﻿namespace RigantiGraphQlDemo.Api.Auth
+﻿namespace RigantiGraphQlDemo.Api.Configuration.Auth
 {
     public static class Policies
     {

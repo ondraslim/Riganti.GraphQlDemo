@@ -1,7 +1,7 @@
 ﻿using GraphQL;
 using GraphQL.Server.Authorization.AspNetCore;
 using GraphQL.Types;
-using RigantiGraphQlDemo.Api.Auth;
+using RigantiGraphQlDemo.Api.Configuration.Auth;
 using RigantiGraphQlDemo.Api.GraphQL.InputTypes;
 using RigantiGraphQlDemo.Api.GraphQL.Types.AnimalTypes;
 using RigantiGraphQlDemo.Dal.DataStore.Animal;
