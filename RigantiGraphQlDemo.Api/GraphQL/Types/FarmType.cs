@@ -1,30 +1,37 @@
-﻿using GraphQL.DataLoader;
-using GraphQL.Types;
-using RigantiGraphQlDemo.Api.GraphQL.Types.AnimalTypes;
-using RigantiGraphQlDemo.Dal.DataStore.Common;
+﻿using HotChocolate.Types;
 using RigantiGraphQlDemo.Dal.Entities;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Types
 {
-    public class FarmType : ObjectGraphType<Farm>
+    public class FarmType : ObjectType<Farm>
     {
-        public FarmType(IDataStore dataStore, IDataLoaderContextAccessor accessor)
+        protected override void Configure(IObjectTypeDescriptor<Farm> descriptor)
         {
-            Field(x => x.Id, type: typeof(IdGraphType)).Description("The ID of the Farm.");
-            Field(x => x.Name).Description("The name of the Farm.");
-            Field(x => x.PersonId).Description("The id of the Farm's owner.");
-            Field<PersonType, Person>()
-                .Name("Person")
-                .Description("Farm's owner.")
-                .ResolveAsync(ctx =>
-                {
-                    var personLoader = accessor.Context.GetOrAddBatchLoader<int, Person>(
-                        "GetPersonById",
-                        dataStore.GetPersonsByIdDataLoaderAsync);
-                    return personLoader.LoadAsync(ctx.Source.PersonId);
-                });
+            descriptor
+                .Field(x => x.Id)
+                .Type<NonNullType<IdType>>()
+                .Description("The ID of the Farm.");
 
-            Field(x => x.Animals, type: typeof(ListGraphType<AnimalType>)).Description("Farm's animals.");
+            descriptor
+                .Field(x => x.Name)
+                .Type<StringType>()
+                .Description("The name of the Farm.");
+
+
+            descriptor
+                .Field(x => x.PersonId)
+                .Type<NonNullType<IdType>>()
+                .Description("The id of the Farm's owner.");
+
+            descriptor
+                .Field(x => x.Person)
+                .Type<PersonType>()
+                .Description("Farm's owner.");
+
+            descriptor
+                .Field(x => x.Animals)
+                .Type<ListType<AnimalType>>()
+                .Description("Farm's animals.");
         }
     }
 }

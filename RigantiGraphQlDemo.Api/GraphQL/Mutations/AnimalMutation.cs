@@ -1,55 +1,28 @@
-﻿using GraphQL;
-using GraphQL.Server.Authorization.AspNetCore;
-using GraphQL.Types;
-using RigantiGraphQlDemo.Api.Configuration.Auth;
-using RigantiGraphQlDemo.Api.GraphQL.InputTypes;
-using RigantiGraphQlDemo.Api.GraphQL.Types.AnimalTypes;
-using RigantiGraphQlDemo.Dal.DataStore.Animal;
+﻿using HotChocolate;
+using RigantiGraphQlDemo.Api.GraphQL.InputTypes.Animal;
+using RigantiGraphQlDemo.Dal;
 using RigantiGraphQlDemo.Dal.Entities;
+using System.Threading.Tasks;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Mutations
 {
-    public class AnimalMutation : ObjectGraphType, IMutation
+    public class AnimalMutation
     {
-        public AnimalMutation(IAnimalDataStore animalDataStore)
+        public async Task<AddAnimalPayload> AddAnimalAsync(
+            AddAnimalInput input,
+            [Service] AnimalFarmDbContext db)
         {
-            // authorize all mutations
-            this.AuthorizeWith(Policies.LoggedIn);
+            var animal = new Animal
+            {
+                Name = input.Name,
+                Species = input.Species,
+                FarmId = input.FarmId
+            };
 
-            Field<AnimalType>()
-                .Name("addAnimal")
-                .Argument<NonNullGraphType<AnimalInputType>>("newAnimal", "new animal data")
-                .ResolveAsync(async context =>
-                {
-                    var animal = context.GetArgument<Animal>("newAnimal");
-                    return await animalDataStore.CreateAnimalAsync(animal);
-                });
+            await db.Animals.AddAsync(animal);
+            await db.SaveChangesAsync();
 
-            Field<AnimalType>()
-                .Name("updateAnimal")
-                .Argument<NonNullGraphType<IdGraphType>>("id", "id of Animal to update")
-                .Argument<NonNullGraphType<AnimalInputType>>("updateAnimal", "new animal data")
-                .ResolveAsync(async context =>
-                {
-                    var animal = context.GetArgument<Animal>("updateAnimal");
-                    var animalId = context.GetArgument<int>("id");
-                    var updatedAnimal = await animalDataStore.UpdateAnimalAsync(animalId, animal);
-                    if (updatedAnimal == null)
-                        context.Errors.Add(new ExecutionError($"Couldn't find any animal of id '{animalId}'."));
-                    return updatedAnimal;
-                });
-
-            Field<AnimalType>()
-                .Name("deleteAnimal")
-                .Argument<NonNullGraphType<IdGraphType>>("animalId", "id of Animal to remove")
-                .ResolveAsync(async context =>
-                {
-                    var animalId = context.GetArgument<int>("animalId");
-                    var updatedAnimal = await animalDataStore.DeleteAnimalAsync(animalId);
-                    if (updatedAnimal == null)
-                        context.Errors.Add(new ExecutionError($"Couldn't find any animal of id '{animalId}'."));
-                    return updatedAnimal;
-                });
+            return new AddAnimalPayload(animal, input.ClientMutationId);
         }
     }
 }

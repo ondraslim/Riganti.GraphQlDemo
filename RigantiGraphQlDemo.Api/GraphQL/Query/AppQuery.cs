@@ -1,33 +1,18 @@
-﻿using GraphQL;
-using GraphQL.Types;
-using RigantiGraphQlDemo.Api.GraphQL.Types;
-using RigantiGraphQlDemo.Dal.DataStore.Common;
+﻿using HotChocolate;
+using Microsoft.EntityFrameworkCore;
+using RigantiGraphQlDemo.Dal;
+using RigantiGraphQlDemo.Dal.Entities;
+using System.Linq;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Query
 {
-    public class AppQuery : ObjectGraphType
+    public class AppQuery
     {
-        public AppQuery(IDataStore dataStore)
-        {
-            Field<PersonType>()
-                .Name("Person")
-                .Description("Get Person by Id")
-                .Argument<IdGraphType>(Name = "id", Description = "The ID of the Person.")
-                .ResolveAsync(async context =>
-                {
-                    var id = context.GetArgument<int>("id");
-                    return await dataStore.GetPersonByIdAsync(id);
-                });
+        public IQueryable<Person> GetPersons([Service] AnimalFarmDbContext db) =>
+            db.Persons.Include(p => p.Farms).ThenInclude(f => f.Animals);
 
-            Field<ListGraphType<PersonType>>()
-                .Name("Persons")
-                .Description("Get all Persons")
-                .ResolveAsync(async context => await dataStore.GetPersonsAsync());
 
-            Field<ListGraphType<FarmType>>()
-                .Name("Farms")
-                .Description("Get all Farms")
-                .ResolveAsync(async context => await dataStore.GetFarmsAsync());
-        }
+        public IQueryable<Farm> GetFarms([Service] AnimalFarmDbContext db) =>
+            db.Farms.Include(p => p.Person).Include(f => f.Animals);
     }
 }

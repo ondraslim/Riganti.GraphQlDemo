@@ -1,37 +1,31 @@
-﻿using GraphQL.DataLoader;
-using GraphQL.Server.Authorization.AspNetCore;
-using GraphQL.Types;
-using RigantiGraphQlDemo.Dal.DataStore.Common;
+﻿using HotChocolate.Types;
 using RigantiGraphQlDemo.Dal.Entities;
-using System.Collections.Generic;
-using RigantiGraphQlDemo.Api.Configuration.Auth;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Types
 {
-    public class PersonType : ObjectGraphType<Person>
+    public class PersonType : ObjectType<Person>
     {
-        public PersonType(IDataStore dataStore, IDataLoaderContextAccessor accessor)
+        protected override void Configure(IObjectTypeDescriptor<Person> descriptor)
         {
-            Field(x => x.Id, type: typeof(IdGraphType)).Description("The ID of the Farm.");
-            Field(x => x.Name).Description("The name of the Farm.");
-            Field<ListGraphType<FarmType>, IEnumerable<Farm>>()
-                .Name("Farms")
-                .Description("The farms of the Person.")
-                .AuthorizeWith(Policies.LoggedIn)
-                .ResolveAsync(ctx =>
-                    {
-                        var farmLoader =
-                            accessor.Context.GetOrAddCollectionBatchLoader<int, Farm>(
-                                "GetFarmsByPersonId",
-                                dataStore.GetFarmsByPersonIdDataLoaderAsync);
+            descriptor
+                .Field(x => x.Id)
+                .Type<NonNullType<IdType>>()
+                .Description("ID of the Person.");
 
-                        return farmLoader.LoadAsync(ctx.Source.Id);
-                    }
-                );
+            descriptor
+                .Field(x => x.Name)
+                .Type<StringType>()
+                .Description("Name of the Person.");
 
-            Field(x => x.SecretPiggyBankLocation)
-                .Description("The secret location of person's piggy bank. (should not be available!)")
-                .AuthorizeWith(Policies.Admin);
+            descriptor
+                .Field(x => x.SecretPiggyBankLocation)
+                .Type<StringType>()
+                .Description("Secret location of person's piggy bank. (should not be available!)");
+
+            descriptor
+                .Field(x => x.Farms)
+                .Type<ListType<FarmType>>()
+                .Description("Farms owned by the Person.");
         }
     }
 }

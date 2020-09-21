@@ -1,26 +1,16 @@
-using GraphiQl;
-using GraphQL;
-using GraphQL.Server;
-using GraphQL.Server.Authorization.AspNetCore;
-using GraphQL.Server.Ui.Playground;
-using GraphQL.Server.Ui.Voyager;
-using GraphQL.Types;
-using GraphQL.Validation;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using HotChocolate;
+using HotChocolate.AspNetCore;
+using HotChocolate.AspNetCore.Voyager;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using RigantiGraphQlDemo.Api.Configuration;
-using RigantiGraphQlDemo.Api.Configuration.Auth;
-using RigantiGraphQlDemo.Api.GraphQL.Mutations;
-using RigantiGraphQlDemo.Api.GraphQL.Schema;
+using RigantiGraphQlDemo.Api.GraphQL.Query;
+using RigantiGraphQlDemo.Api.GraphQL.Types;
 using RigantiGraphQlDemo.Dal;
 using RigantiGraphQlDemo.Dal.DataStore.Animal;
 using RigantiGraphQlDemo.Dal.DataStore.Common;
-using System;
 
 namespace RigantiGraphQlDemo.Api
 {
@@ -35,47 +25,14 @@ namespace RigantiGraphQlDemo.Api
             services.AddSingleton<IDataStore, DataStore>();
             services.AddSingleton<IAnimalDataStore, AnimalDataStore>();
             
-            services.AddSingleton<ISchema, AppSchema>();
-            services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
-
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
             services
-                .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(o => { o.Cookie.Name = "graph-auth"; });
-
-            services
-                .AddTransient<IValidationRule, AuthorizationValidationRule>()
-                .AddAuthorization(options =>
-                {
-                    options.AddPolicy(Policies.LoggedIn, p => p.RequireRole(Roles.UserRole));
-                    options.AddPolicy(Policies.Admin, p => p.RequireRole(Roles.AdminRole));
-                });
-
-            services
-                .AddGraphQL(o =>
-                {
-                    o.ComplexityConfiguration = GraphQlConfig.ComplexityConfiguration;
-                    o.EnableMetrics = true;
-                    o.UnhandledExceptionDelegate = ctx => Console.WriteLine($"Error occured: {ctx.OriginalException.Message}");
-                })
-                .AddDataLoader()
-                .AddGraphTypes()
-                .AddUserContextBuilder(o =>
-                {
-                    o.User = GraphQlConfig.FakedUserClaims;
-                    return GraphQlConfig.FakedUserContext;
-                })
-                // Add required services for de/serialization
-                .AddSystemTextJson(deserializerSettings => { }, serializerSettings => { })
-                .AddErrorInfoProvider(opt => opt.ExposeExceptionStackTrace = true )
-
-                .AddWebSockets();
-
-
-            services.AddSingleton<IMutation, LoginMutation>();
-            services.AddSingleton<IMutation, AnimalMutation>();
-
+                .AddGraphQL(sp => SchemaBuilder.New()
+                    .AddServices(sp)
+                    .AddQueryType<AppQuery>()
+                    .AddType<AnimalType>()
+                    .AddType<FarmType>()
+                    .AddType<PersonType>()
+                    .Create());
 
             // If using Kestrel:
             services.Configure<KestrelServerOptions>(options => { options.AllowSynchronousIO = true; });
@@ -91,23 +48,16 @@ namespace RigantiGraphQlDemo.Api
             {
                 app.UseDeveloperExceptionPage();
             }
-            // Use the GraphQL subscriptions in the specified schema and make them available.
-            app.UseWebSockets();
 
-            app.UseGraphQL<ISchema>();  
-            app.UseAuthentication()
-                .UseAuthorization();
-
-            // add graph ql
-            app.UseGraphiQl("/GraphiQL");
-
-            app.UseGraphQLWebSockets<ISchema>();
+            app.UseRouting();
+            
+            app.UseGraphQL();
 
             // Add the GraphQL Playground UI to try out the GraphQL API at /
             // Add the GraphQL Voyager UI to let you navigate your GraphQL API as a spider graph at /voyager.
             app
-                .UseGraphQLPlayground(new GraphQLPlaygroundOptions { Path = "/" })
-                .UseGraphQLVoyager(new GraphQLVoyagerOptions { Path = "/voyager" });
+                .UsePlayground("/")
+                .UseVoyager("/voyager");
         }
     }
 }
