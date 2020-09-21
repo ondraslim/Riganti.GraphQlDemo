@@ -11,7 +11,7 @@ namespace RigantiGraphQlDemo.Api.Configuration
             new ComplexityConfiguration
             {
                 MaxDepth = 3,                   // Nested types in query
-                FieldImpact = 5,                // average number of records in db
+                FieldImpact = 3,                // average number of records in db
                 MaxComplexity = 1_000           // max amount of returned entities in a query
             };
 

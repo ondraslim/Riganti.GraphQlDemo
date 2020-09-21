@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Security.Claims;
 using GraphiQl;
 using GraphQL;
 using GraphQL.Server;
@@ -9,7 +7,6 @@ using GraphQL.Server.Ui.Voyager;
 using GraphQL.Types;
 using GraphQL.Validation;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -20,7 +17,6 @@ using RigantiGraphQlDemo.Api.Configuration;
 using RigantiGraphQlDemo.Api.Configuration.Auth;
 using RigantiGraphQlDemo.Api.GraphQL.Mutations;
 using RigantiGraphQlDemo.Api.GraphQL.Schema;
-using RigantiGraphQlDemo.Api.Middleware;
 using RigantiGraphQlDemo.Dal;
 using RigantiGraphQlDemo.Dal.DataStore.Animal;
 using RigantiGraphQlDemo.Dal.DataStore.Common;
@@ -53,7 +49,7 @@ namespace RigantiGraphQlDemo.Api
                 .AddTransient<IValidationRule, AuthorizationValidationRule>()
                 .AddAuthorization(options =>
                 {
-                    options.AddPolicy(Policies.LoggedIn, p => p.RequireRole(Roles.UserRole));
+                    options.AddPolicy(Policies.LoggedIn, p => p.RequireRole(Roles.UserRole, Roles.AdminRole));
                     options.AddPolicy(Policies.Admin, p => p.RequireRole(Roles.AdminRole));
                 });
 
@@ -87,13 +83,13 @@ namespace RigantiGraphQlDemo.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+
             // Use the GraphQL subscriptions in the specified schema and make them available.
             app.UseWebSockets();
 
-            app.UseMiddleware<GraphQlMiddleware>();
-            app.UseGraphQL<ISchema>();  
             app.UseAuthentication()
-                .UseAuthorization();
+                .UseAuthorization()
+                .UseGraphQL<ISchema>();
 
             // add graph ql
             app.UseGraphiQl("/GraphiQL");
