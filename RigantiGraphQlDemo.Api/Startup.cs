@@ -21,7 +21,6 @@ using RigantiGraphQlDemo.Dal;
 using RigantiGraphQlDemo.Dal.DataStore.Animal;
 using RigantiGraphQlDemo.Dal.DataStore.Common;
 using System;
-using System.Security.Claims;
 
 namespace RigantiGraphQlDemo.Api
 {

@@ -45,7 +45,8 @@ namespace RigantiGraphQlDemo.Client
                     Console.WriteLine($"new animal \"{response.Data.Name} - {response.Data.Species}\" in a farm of ID {response.Data.FarmId}");
                 },
                 exception => { Console.WriteLine($"subscription stream failed: {exception}"); },
-                () => { Console.WriteLine("subscription stream completed"); });
+                () => { Console.WriteLine("subscription stream completed"); }
+                );
             await Task.Delay(200);
 
 
