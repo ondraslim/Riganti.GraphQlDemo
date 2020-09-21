@@ -6,7 +6,6 @@ namespace RigantiGraphQlDemo.Dal
 {
     public class AnimalFarmDbContext : DbContext
     {
-
         public DbSet<Person> Persons { get; set; } = default!;
         public DbSet<Farm> Farms { get; set; } = default!;
         public DbSet<Animal> Animals { get; set; } = default!;
