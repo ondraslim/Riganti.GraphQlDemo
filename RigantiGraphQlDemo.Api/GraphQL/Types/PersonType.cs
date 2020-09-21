@@ -1,4 +1,5 @@
 ﻿using HotChocolate.Types;
+using RigantiGraphQlDemo.Api.GraphQL.Resolvers;
 using RigantiGraphQlDemo.Dal.Entities;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Types
@@ -25,7 +26,8 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Types
             descriptor
                 .Field(x => x.Farms)
                 .Type<ListType<FarmType>>()
-                .Description("Farms owned by the Person.");
+                .Description("Farms owned by the Person.")
+                .ResolveWith<FarmResolvers>(fr => fr.GetFarmsByPersonIdsAsync(default!, default!, default));
         }
     }
 }

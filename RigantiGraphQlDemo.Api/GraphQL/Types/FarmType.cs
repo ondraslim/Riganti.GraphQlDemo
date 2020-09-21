@@ -1,4 +1,5 @@
 ﻿using HotChocolate.Types;
+using RigantiGraphQlDemo.Api.GraphQL.Resolvers;
 using RigantiGraphQlDemo.Dal.Entities;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Types
@@ -31,7 +32,8 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Types
             descriptor
                 .Field(x => x.Animals)
                 .Type<ListType<AnimalType>>()
-                .Description("Farm's animals.");
+                .Description("Farm's animals.")
+                .ResolveWith<AnimalResolvers>(ar => ar.GetAnimalsByFarmIdsAsync(default!, default!, default));
         }
     }
 }

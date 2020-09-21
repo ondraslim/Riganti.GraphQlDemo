@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using RigantiGraphQlDemo.Api.GraphQL.DataLoaders;
 using RigantiGraphQlDemo.Api.GraphQL.Mutations;
 using RigantiGraphQlDemo.Api.GraphQL.Query;
 using RigantiGraphQlDemo.Api.GraphQL.Types;
@@ -27,7 +28,8 @@ namespace RigantiGraphQlDemo.Api
                     opt.UseSqlite("Data Source=animalFarm.db");
                     opt.UseLoggerFactory(LoggerFactory.Create(builder => { builder.AddDebug(); }));
                 });
-            
+
+            services.AddDataLoader<PersonByIdDataLoader>();
             services
                 .AddGraphQL(sp => SchemaBuilder.New()
                     .AddServices(sp)

@@ -1,9 +1,12 @@
 ﻿using HotChocolate;
 using Microsoft.EntityFrameworkCore;
+using RigantiGraphQlDemo.Api.Extensions;
+using RigantiGraphQlDemo.Api.GraphQL.DataLoaders;
 using RigantiGraphQlDemo.Dal;
 using RigantiGraphQlDemo.Dal.Entities;
 using System.Linq;
-using RigantiGraphQlDemo.Api.Extensions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Query
 {
@@ -11,7 +14,13 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Query
     {
         [UseApplicationDbContext]
         public IQueryable<Person> GetPersons([Service] AnimalFarmDbContext db) =>
-            db.Persons.Include(p => p.Farms).ThenInclude(f => f.Animals);
+            db.Persons;
+
+        public Task<Person> GetPersonByIdAsync(
+            int id,
+            PersonByIdDataLoader dataLoader,
+            CancellationToken cancellationToken) =>
+            dataLoader.LoadAsync(id, cancellationToken);
 
         [UseApplicationDbContext]
         public IQueryable<Farm> GetFarms([Service] AnimalFarmDbContext db) =>

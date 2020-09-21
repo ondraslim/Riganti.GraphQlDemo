@@ -15,8 +15,8 @@ namespace RigantiGraphQlDemo.Api.GraphQL.InputTypes.Animal
         }
 
         public int Id { get; set; }
-        public string Name { get; }
-        public string Species { get; }
+        public string? Name { get; }
+        public string? Species { get; }
         public int FarmId { get; }
         public Farm Farm { get; }
         public string ClientMutationId { get; }
