@@ -198,7 +198,6 @@ query test {
 }
 
 # Results into:
-
 {
   "errors": [
     {
