@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using RigantiGraphQlDemo.Dal.Entities;
 using RigantiGraphQlDemo.Dal.Extensions;
 
@@ -7,18 +6,16 @@ namespace RigantiGraphQlDemo.Dal
 {
     public class AnimalFarmDbContext : DbContext
     {
-        private readonly ILoggerFactory loggerFactory = LoggerFactory.Create(builder => { builder.AddDebug(); });
 
-        public DbSet<Person> Persons { get; set; }
-        public DbSet<Farm> Farms { get; set; }
-        public DbSet<Animal> Animals { get; set; }
+        public DbSet<Person> Persons { get; set; } = default!;
+        public DbSet<Farm> Farms { get; set; } = default!;
+        public DbSet<Animal> Animals { get; set; } = default!;
 
-
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
+        public AnimalFarmDbContext(DbContextOptions<AnimalFarmDbContext> options) : base(options)
         {
-            options.UseSqlite("Data Source=animalFarm.db");
-            options.UseLoggerFactory(loggerFactory);
+            
         }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

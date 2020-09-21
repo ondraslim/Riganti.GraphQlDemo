@@ -9,9 +9,14 @@ namespace RigantiGraphQlDemo.Dal.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string SecretPiggyBankLocation { get; set; }
 
-        public virtual ICollection<Farm> Farms { get; set; }
+        [Required]
+        [StringLength(100)]
+        public string? Name { get; set; }
+
+        [StringLength(200)]
+        public string? SecretPiggyBankLocation { get; set; }
+
+        public virtual ICollection<Farm> Farms { get; set; } = default!;
     }
 }

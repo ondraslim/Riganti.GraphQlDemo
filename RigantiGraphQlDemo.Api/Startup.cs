@@ -4,13 +4,14 @@ using HotChocolate.AspNetCore.Voyager;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using RigantiGraphQlDemo.Api.GraphQL.Mutations;
 using RigantiGraphQlDemo.Api.GraphQL.Query;
 using RigantiGraphQlDemo.Api.GraphQL.Types;
 using RigantiGraphQlDemo.Dal;
-using RigantiGraphQlDemo.Dal.DataStore.Animal;
-using RigantiGraphQlDemo.Dal.DataStore.Common;
 
 namespace RigantiGraphQlDemo.Api
 {
@@ -20,15 +21,18 @@ namespace RigantiGraphQlDemo.Api
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AnimalFarmDbContext>(ServiceLifetime.Singleton);
-
-            services.AddSingleton<IDataStore, DataStore>();
-            services.AddSingleton<IAnimalDataStore, AnimalDataStore>();
+            services.AddDbContextPool<AnimalFarmDbContext>(
+                opt =>
+                {
+                    opt.UseSqlite("Data Source=animalFarm.db");
+                    opt.UseLoggerFactory(LoggerFactory.Create(builder => { builder.AddDebug(); }));
+                });
             
             services
                 .AddGraphQL(sp => SchemaBuilder.New()
                     .AddServices(sp)
                     .AddQueryType<AppQuery>()
+                    .AddMutationType<AnimalMutation>()
                     .AddType<AnimalType>()
                     .AddType<FarmType>()
                     .AddType<PersonType>()

@@ -10,12 +10,16 @@ namespace RigantiGraphQlDemo.Dal.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        [Required]
+        [StringLength(100)]
+        public string? Name { get; set; }
+
+        [Required]
         public int PersonId { get; set; }
 
 
-        public virtual Person Person { get; set; }
+        public virtual Person Person { get; set; } = default!;
 
-        public virtual ICollection<Animal> Animals { get; set; }
+        public virtual ICollection<Animal> Animals { get; set; } = default!;
     }
 }

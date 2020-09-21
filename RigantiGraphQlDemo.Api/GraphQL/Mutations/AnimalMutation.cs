@@ -1,4 +1,5 @@
 ﻿using HotChocolate;
+using RigantiGraphQlDemo.Api.Extensions;
 using RigantiGraphQlDemo.Api.GraphQL.InputTypes.Animal;
 using RigantiGraphQlDemo.Dal;
 using RigantiGraphQlDemo.Dal.Entities;
@@ -8,6 +9,7 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Mutations
 {
     public class AnimalMutation
     {
+        [UseApplicationDbContext]
         public async Task<AddAnimalPayload> AddAnimalAsync(
             AddAnimalInput input,
             [Service] AnimalFarmDbContext db)
