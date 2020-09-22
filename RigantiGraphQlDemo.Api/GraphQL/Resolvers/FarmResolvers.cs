@@ -1,4 +1,4 @@
-﻿using RigantiGraphQlDemo.Api.GraphQL.DataLoaders;
+﻿using RigantiGraphQlDemo.Api.GraphQL.DataLoaders.Farm;
 using RigantiGraphQlDemo.Dal.Entities;
 using System.Collections.Generic;
 using System.Threading;
@@ -12,6 +12,12 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Resolvers
             Person person,
             FarmsByPersonIdDataLoader dataLoader,
             CancellationToken token) =>
-            await dataLoader.LoadAsync(person.Id, token);
+            await dataLoader.LoadAsync(person.Id, token);      
+        
+        public async Task<Farm> GetFarmsByIdsAsync(
+            Animal animal,
+            FarmByIdDataLoader dataLoader,
+            CancellationToken token) =>
+            await dataLoader.LoadAsync(animal.FarmId, token);
     }
 }

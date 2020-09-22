@@ -1,4 +1,7 @@
-﻿using HotChocolate.Types;
+﻿using HotChocolate.Resolvers;
+using HotChocolate.Types;
+using HotChocolate.Types.Relay;
+using RigantiGraphQlDemo.Api.GraphQL.DataLoaders.Person;
 using RigantiGraphQlDemo.Api.GraphQL.Resolvers;
 using RigantiGraphQlDemo.Dal.Entities;
 
@@ -9,9 +12,10 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Types
         protected override void Configure(IObjectTypeDescriptor<Person> descriptor)
         {
             descriptor
-                .Field(x => x.Id)
-                .Type<NonNullType<IdType>>()
-                .Description("ID of the Person.");
+                .AsNode()
+                .IdField(x => x.Id)
+                .NodeResolver((context, id) =>
+                    context.DataLoader<PersonByIdDataLoader>().LoadAsync(id, context.RequestAborted)); ;
 
             descriptor
                 .Field(x => x.Name)

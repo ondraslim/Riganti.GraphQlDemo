@@ -1,7 +1,8 @@
 ﻿using HotChocolate;
+using HotChocolate.Types.Relay;
 using Microsoft.EntityFrameworkCore;
 using RigantiGraphQlDemo.Api.Extensions;
-using RigantiGraphQlDemo.Api.GraphQL.DataLoaders;
+using RigantiGraphQlDemo.Api.GraphQL.DataLoaders.Person;
 using RigantiGraphQlDemo.Dal;
 using RigantiGraphQlDemo.Dal.Entities;
 using System.Collections.Generic;
@@ -14,10 +15,14 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Query
     {
         [UseApplicationDbContext]
         public Task<List<Person>> GetPersons([ScopedService] AnimalFarmDbContext db) =>
-            db.Persons.ToListAsync();
+            db.Persons.ToListAsync();       
+        
+        [UseApplicationDbContext]
+        public Task<List<Animal>> GetAnimals([ScopedService] AnimalFarmDbContext db) =>
+            db.Animals.ToListAsync();
 
-        public Task<Person> GetPersonByIdAsync(
-            int id,
+        public Task<Person> GetPersonAsync(
+            [ID(nameof(Person))] int id,
             PersonByIdDataLoader dataLoader,
             CancellationToken cancellationToken) =>
             dataLoader.LoadAsync(id, cancellationToken);

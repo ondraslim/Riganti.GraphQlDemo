@@ -2,34 +2,32 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using RigantiGraphQlDemo.Dal;
-using RigantiGraphQlDemo.Dal.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace RigantiGraphQlDemo.Api.GraphQL.DataLoaders
+namespace RigantiGraphQlDemo.Api.GraphQL.DataLoaders.Animal
 {
-    public class PersonByIdDataLoader : BatchDataLoader<int, Person>
+    public class AnimalByFarmIdDataLoader : GroupedDataLoader<int, Dal.Entities.Animal>
     {
         private readonly DbContextPool<AnimalFarmDbContext> dbContextPool;
 
-        public PersonByIdDataLoader(DbContextPool<AnimalFarmDbContext> dbContextPool)
+        public AnimalByFarmIdDataLoader(DbContextPool<AnimalFarmDbContext> dbContextPool)
         {
             this.dbContextPool = dbContextPool ?? throw new ArgumentNullException(nameof(dbContextPool));
         }
 
-        protected override async Task<IReadOnlyDictionary<int, Person>> LoadBatchAsync(
+        protected override async Task<ILookup<int, Dal.Entities.Animal>> LoadGroupedBatchAsync(
             IReadOnlyList<int> keys,
             CancellationToken cancellationToken)
         {
             AnimalFarmDbContext dbContext = dbContextPool.Rent();
             try
             {
-                return await dbContext.Persons
-                    .Where(s => keys.Contains(s.Id))
-                    .ToDictionaryAsync(t => t.Id, cancellationToken);
+                var animals = await dbContext.Animals.Where(f => keys.Contains(f.FarmId)).ToListAsync(cancellationToken);
+                return animals.ToLookup(t => t.FarmId);
             }
             finally
             {

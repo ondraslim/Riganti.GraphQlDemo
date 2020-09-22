@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using RigantiGraphQlDemo.Api.GraphQL.DataLoaders;
+using RigantiGraphQlDemo.Api.GraphQL.DataLoaders.Person;
 using RigantiGraphQlDemo.Api.GraphQL.Mutations;
 using RigantiGraphQlDemo.Api.GraphQL.Query;
 using RigantiGraphQlDemo.Api.GraphQL.Types;
@@ -33,10 +34,12 @@ namespace RigantiGraphQlDemo.Api
                 .AddGraphQL(sp => SchemaBuilder.New()
                     .AddServices(sp)
                     .AddQueryType<AppQuery>()
-                    .AddMutationType<AnimalMutation>()
+                    .AddMutationType(d => d.Name("Mutation"))
+                        .AddType<AnimalMutation>()
                     .AddType<AnimalType>()
                     .AddType<FarmType>()
                     .AddType<PersonType>()
+                    .EnableRelaySupport()
                     .Create());
         }
 

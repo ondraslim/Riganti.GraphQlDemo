@@ -1,4 +1,4 @@
-﻿using RigantiGraphQlDemo.Api.GraphQL.DataLoaders;
+﻿using RigantiGraphQlDemo.Api.GraphQL.DataLoaders.Animal;
 using RigantiGraphQlDemo.Dal.Entities;
 using System.Collections.Generic;
 using System.Threading;
