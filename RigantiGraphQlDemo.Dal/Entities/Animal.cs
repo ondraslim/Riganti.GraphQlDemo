@@ -1,13 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using RigantiGraphQlDemo.Dal.Entities.Common;
+using System.ComponentModel.DataAnnotations;
 
 namespace RigantiGraphQlDemo.Dal.Entities
 {
-    public class Animal
+    public class Animal : EntityBase
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
 
         [Required]
         [StringLength(100)]

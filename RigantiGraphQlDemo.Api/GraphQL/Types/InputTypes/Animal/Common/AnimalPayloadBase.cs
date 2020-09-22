@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using RigantiGraphQlDemo.Api.Exceptions;
+﻿using RigantiGraphQlDemo.Api.Exceptions;
 using RigantiGraphQlDemo.Api.GraphQL.Types.InputTypes.Common;
+using System.Collections.Generic;
 
-namespace RigantiGraphQlDemo.Api.GraphQL.Types.InputTypes.Animal
+namespace RigantiGraphQlDemo.Api.GraphQL.Types.InputTypes.Animal.Common
 {
     public class AnimalPayloadBase : PayloadBase
     {

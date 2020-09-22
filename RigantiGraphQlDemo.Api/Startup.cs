@@ -7,7 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using RigantiGraphQlDemo.Api.GraphQL.DataLoaders;
+using RigantiGraphQlDemo.Api.GraphQL.DataLoaders.Animal;
+using RigantiGraphQlDemo.Api.GraphQL.DataLoaders.Farm;
 using RigantiGraphQlDemo.Api.GraphQL.DataLoaders.Person;
 using RigantiGraphQlDemo.Api.GraphQL.Mutations;
 using RigantiGraphQlDemo.Api.GraphQL.Query;
@@ -30,12 +31,23 @@ namespace RigantiGraphQlDemo.Api
                 });
 
             services.AddDataLoader<PersonByIdDataLoader>();
+            
+            services.AddDataLoader<FarmByIdDataLoader>();
+            services.AddDataLoader<FarmsByPersonIdDataLoader>();
+
+            services.AddDataLoader<AnimalByFarmIdDataLoader>();
+            services.AddDataLoader<AnimalByFarmIdDataLoader>();
+
             services
                 .AddGraphQL(sp => SchemaBuilder.New()
                     .AddServices(sp)
-                    .AddQueryType<AppQuery>()
+                    .AddQueryType(q => q.Name("Query"))
+                        .AddType<PersonQueries>()
+                        .AddType<FarmQueries>()
+                        .AddType<AnimalQueries>()
                     .AddMutationType(d => d.Name("Mutation"))
                         .AddType<AnimalMutation>()
+                        .AddType<FarmMutation>()
                     .AddType<AnimalType>()
                     .AddType<FarmType>()
                     .AddType<PersonType>()

@@ -1,4 +1,6 @@
-﻿using RigantiGraphQlDemo.Api.GraphQL.Types.InputTypes.Common;
+﻿using HotChocolate.Types.Relay;
+using RigantiGraphQlDemo.Api.GraphQL.Types.InputTypes.Common;
+using RigantiGraphQlDemo.Dal.Entities;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Types.InputTypes.Animal
 {
@@ -6,6 +8,8 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Types.InputTypes.Animal
     {
         public string Name { get; }
         public string Species { get; }
+
+        [ID(nameof(Farm))]
         public int FarmId { get; }
 
 

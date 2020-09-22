@@ -4,14 +4,14 @@ using System.Collections.Generic;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Types.InputTypes.Animal
 {
-    public class AddAnimalPayload : AnimalPayloadBase
+    public class DeleteAnimalPayload : AnimalPayloadBase
     {
-        public AddAnimalPayload(Dal.Entities.Animal animal, string? clientMutationId)
+        public DeleteAnimalPayload(Dal.Entities.Animal? animal, string? clientMutationId) 
             : base(animal, clientMutationId)
         {
         }
 
-        public AddAnimalPayload(IReadOnlyList<UserError> errors, string? clientMutationId)
+        public DeleteAnimalPayload(IReadOnlyList<UserError> errors, string? clientMutationId)
             : base(errors, clientMutationId)
         {
         }

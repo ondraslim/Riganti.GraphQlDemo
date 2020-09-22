@@ -1,4 +1,5 @@
 ﻿using HotChocolate;
+using HotChocolate.Types;
 using HotChocolate.Types.Relay;
 using Microsoft.EntityFrameworkCore;
 using RigantiGraphQlDemo.Api.Extensions;
@@ -6,20 +7,18 @@ using RigantiGraphQlDemo.Api.GraphQL.DataLoaders.Person;
 using RigantiGraphQlDemo.Dal;
 using RigantiGraphQlDemo.Dal.Entities;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Query
 {
-    public class AppQuery
+    [ExtendObjectType(Name = "Query")]
+    public class PersonQueries
     {
         [UseApplicationDbContext]
         public Task<List<Person>> GetPersons([ScopedService] AnimalFarmDbContext db) =>
-            db.Persons.ToListAsync();       
-        
-        [UseApplicationDbContext]
-        public Task<List<Animal>> GetAnimals([ScopedService] AnimalFarmDbContext db) =>
-            db.Animals.ToListAsync();
+            db.Persons.OrderBy(p => p.Name).ToListAsync();
 
         public Task<Person> GetPersonAsync(
             [ID(nameof(Person))] int id,
@@ -27,8 +26,10 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Query
             CancellationToken cancellationToken) =>
             dataLoader.LoadAsync(id, cancellationToken);
 
-        [UseApplicationDbContext]
-        public Task<List<Farm>> GetFarms([ScopedService] AnimalFarmDbContext db) =>
-            db.Farms.Include(p => p.Person).Include(f => f.Animals).ToListAsync();
+        public Task<IReadOnlyList<Person>> GetPersonsAsync(
+            [ID(nameof(Person))] int[] ids,
+            PersonByIdDataLoader dataLoader,
+            CancellationToken cancellationToken) =>
+            dataLoader.LoadAsync(ids, cancellationToken);
     }
 }
