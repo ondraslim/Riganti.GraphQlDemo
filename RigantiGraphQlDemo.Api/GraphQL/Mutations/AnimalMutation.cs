@@ -12,7 +12,7 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Mutations
         [UseApplicationDbContext]
         public async Task<AddAnimalPayload> AddAnimalAsync(
             AddAnimalInput input,
-            [Service] AnimalFarmDbContext db)
+            [ScopedService] AnimalFarmDbContext db)
         {
             var animal = new Animal
             {

@@ -4,7 +4,7 @@ using RigantiGraphQlDemo.Api.Extensions;
 using RigantiGraphQlDemo.Api.GraphQL.DataLoaders;
 using RigantiGraphQlDemo.Dal;
 using RigantiGraphQlDemo.Dal.Entities;
-using System.Linq;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,8 +13,8 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Query
     public class AppQuery
     {
         [UseApplicationDbContext]
-        public IQueryable<Person> GetPersons([Service] AnimalFarmDbContext db) =>
-            db.Persons;
+        public Task<List<Person>> GetPersons([ScopedService] AnimalFarmDbContext db) =>
+            db.Persons.ToListAsync();
 
         public Task<Person> GetPersonByIdAsync(
             int id,
@@ -23,7 +23,7 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Query
             dataLoader.LoadAsync(id, cancellationToken);
 
         [UseApplicationDbContext]
-        public IQueryable<Farm> GetFarms([Service] AnimalFarmDbContext db) =>
-            db.Farms.Include(p => p.Person).Include(f => f.Animals);
+        public Task<List<Farm>> GetFarms([ScopedService] AnimalFarmDbContext db) =>
+            db.Farms.Include(p => p.Person).Include(f => f.Animals).ToListAsync();
     }
 }
