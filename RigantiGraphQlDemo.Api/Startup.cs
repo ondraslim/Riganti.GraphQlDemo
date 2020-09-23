@@ -12,6 +12,7 @@ using RigantiGraphQlDemo.Api.GraphQL.DataLoaders.Farm;
 using RigantiGraphQlDemo.Api.GraphQL.DataLoaders.Person;
 using RigantiGraphQlDemo.Api.GraphQL.Mutations;
 using RigantiGraphQlDemo.Api.GraphQL.Query;
+using RigantiGraphQlDemo.Api.GraphQL.Subscriptions;
 using RigantiGraphQlDemo.Api.GraphQL.Types;
 using RigantiGraphQlDemo.Dal;
 
@@ -38,6 +39,8 @@ namespace RigantiGraphQlDemo.Api
             services.AddDataLoader<AnimalByFarmIdDataLoader>();
             services.AddDataLoader<AnimalByFarmIdDataLoader>();
 
+            services.AddInMemorySubscriptions();
+
             services
                 .AddGraphQL(sp => SchemaBuilder.New()
                     .AddServices(sp)
@@ -48,6 +51,8 @@ namespace RigantiGraphQlDemo.Api
                     .AddMutationType(d => d.Name("Mutation"))
                         .AddType<AnimalMutation>()
                         .AddType<FarmMutation>()
+                    .AddSubscriptionType(d => d.Name("Subscription"))
+                        .AddType<AnimalSubscriptions>()
                     .AddType<AnimalType>()
                     .AddType<FarmType>()
                     .AddType<PersonType>()
@@ -63,6 +68,7 @@ namespace RigantiGraphQlDemo.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseWebSockets();
             app.UseRouting();
             
             app.UseGraphQL();
