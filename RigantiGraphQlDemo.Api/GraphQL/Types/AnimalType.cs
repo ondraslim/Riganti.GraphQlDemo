@@ -1,6 +1,7 @@
 ﻿using HotChocolate.Resolvers;
 using HotChocolate.Types;
 using HotChocolate.Types.Relay;
+using RigantiGraphQlDemo.Api.Extensions;
 using RigantiGraphQlDemo.Api.GraphQL.DataLoaders.Animal;
 using RigantiGraphQlDemo.Api.GraphQL.Resolvers;
 using RigantiGraphQlDemo.Dal.Entities;
@@ -25,6 +26,7 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Types
             descriptor
                 .Field(x => x.Species)
                 .Type<StringType>()
+                .UseUpperCase()
                 .Description("The species of the Animal.");
 
             descriptor
