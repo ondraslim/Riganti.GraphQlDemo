@@ -13,6 +13,6 @@ The generation takes place upon project build abd the result can be found in a f
 
 ###### Sources:
 * [HotChocolate workshop](https://github.com/ChilliCream/graphql-workshop/tree/master/docs)
-* [HotChocolate Auth](https://medium.com/@marcinjaniak/graphql-simple-authorization-and-authentication-with-hotchocolate-11-and-asp-net-core-3-162e0a35743d)
 * [HotChocolate Docs](https://chillicream.com/docs/hotchocolate/v10/)
-* [StrawberryShake client](https://chillicream.com/blog/2019/11/25/strawberry-shake_2)
+* [StrawberryShake Client](https://chillicream.com/blog/2019/11/25/strawberry-shake_2)
+* [HotChocolate Auth](https://medium.com/@marcinjaniak/graphql-simple-authorization-and-authentication-with-hotchocolate-11-and-asp-net-core-3-162e0a35743d)
