@@ -125,7 +125,7 @@ services.AddScoped<IDependencyResolver>(_ => new FuncDependencyResolver(_.GetReq
  And we add the schema to our HTTP request pipeline in method `Configure()` in `Startup.cs`:
 
 ```csharp
-app.UseGraphQL<ISchema>();;
+app.UseGraphQL<ISchema>();
 ```
 
 
