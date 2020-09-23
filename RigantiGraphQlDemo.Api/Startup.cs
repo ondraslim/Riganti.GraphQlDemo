@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using GraphiQl;
 using GraphQL;
 using GraphQL.Server;
@@ -10,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RigantiGraphQlDemo.Api.GraphQL.Schema;
 using RigantiGraphQlDemo.Dal;
+using System.Threading.Tasks;
 
 namespace RigantiGraphQlDemo.Api
 {
