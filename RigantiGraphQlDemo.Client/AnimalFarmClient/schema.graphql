@@ -1,0 +1,371 @@
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+type Query {
+  animal(id: ID!): Animal!
+  animals(after: String before: String first: PaginationAmount last: PaginationAmount order_by: AnimalSort where: AnimalFilter): AnimalConnection
+  farm(id: ID!): Farm!
+  farms(after: String before: String first: PaginationAmount last: PaginationAmount order_by: FarmSort where: FarmFilter): FarmConnection
+  node(id: ID!): Node
+  person(id: ID!): Person!
+  persons(after: String before: String first: PaginationAmount last: PaginationAmount order_by: PersonSort where: PersonFilter): PersonConnection
+}
+
+type Mutation {
+  addAnimal(input: AddAnimalInput!): AddAnimalPayload!
+  changeFarmOwner(input: ChangeFarmOwnerInput!): ChangeFarmOwnerPayload!
+  deleteAnimal(input: DeleteAnimalInput!): DeleteAnimalPayload!
+  renameAnimal(input: RenameAnimalInput!): RenameAnimalPayload!
+  renameFarm(input: RenameFarmInput!): RenameFarmPayload!
+  updateAnimal(input: UpdateAnimalInput!): UpdateAnimalPayload!
+}
+
+type Subscription {
+  onAnimalCreated: Animal!
+  onAnimalMovedToFarm(farmId: ID!): AnimalMoved!
+}
+
+type Animal implements Node {
+  "The farm where the Animal lives."
+  farm: Farm
+  "The id of farm where the Animal lives"
+  farmId: ID!
+  id: ID!
+  "The name of the Animal."
+  name: String
+  "The species of the Animal."
+  species: String
+}
+
+type Farm implements Node {
+  "Farm's animals."
+  animals(after: String before: String first: PaginationAmount last: PaginationAmount order_by: AnimalSort where: AnimalFilter): AnimalConnection
+  id: ID!
+  "The name of the Farm."
+  name: String
+  "Farm's owner."
+  person: Person
+  "The id of the Farm's owner."
+  personId: ID!
+}
+
+type Person implements Node {
+  "Farms owned by the Person."
+  farms(after: String before: String first: PaginationAmount last: PaginationAmount order_by: FarmSort where: FarmFilter): FarmConnection
+  id: ID!
+  "Name of the Person."
+  name: String
+  "Secret location of person's piggy bank. (should not be available!)"
+  secretPiggyBankLocation: String
+}
+
+"The node interface is implemented by entities that have a global unique identifier."
+interface Node {
+  id: ID!
+}
+
+input AnimalFilter {
+  AND: [AnimalFilter!]
+  farmId: Int
+  farmId_gt: Int
+  farmId_gte: Int
+  farmId_in: [Int!]
+  farmId_lt: Int
+  farmId_lte: Int
+  farmId_not: Int
+  farmId_not_gt: Int
+  farmId_not_gte: Int
+  farmId_not_in: [Int!]
+  farmId_not_lt: Int
+  farmId_not_lte: Int
+  id: Int
+  id_gt: Int
+  id_gte: Int
+  id_in: [Int!]
+  id_lt: Int
+  id_lte: Int
+  id_not: Int
+  id_not_gt: Int
+  id_not_gte: Int
+  id_not_in: [Int!]
+  id_not_lt: Int
+  id_not_lte: Int
+  name: String
+  name_contains: String
+  name_ends_with: String
+  name_in: [String!]
+  name_not: String
+  name_not_contains: String
+  name_not_ends_with: String
+  name_not_in: [String!]
+  name_not_starts_with: String
+  name_starts_with: String
+  OR: [AnimalFilter!]
+  species: String
+  species_contains: String
+  species_ends_with: String
+  species_in: [String]
+  species_not: String
+  species_not_contains: String
+  species_not_ends_with: String
+  species_not_in: [String]
+  species_not_starts_with: String
+  species_starts_with: String
+}
+
+input AnimalSort {
+  farmId: SortOperationKind
+  id: SortOperationKind
+  name: SortOperationKind
+  species: SortOperationKind
+}
+
+"A connection to a list of items."
+type AnimalConnection {
+  "A list of edges."
+  edges: [AnimalEdge!]
+  "A flattened list of the nodes."
+  nodes: [Animal!]
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+"A connection to a list of items."
+type PersonConnection {
+  "A list of edges."
+  edges: [PersonEdge!]
+  "A flattened list of the nodes."
+  nodes: [Person!]
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+input FarmFilter {
+  AND: [FarmFilter!]
+  id: Int
+  id_gt: Int
+  id_gte: Int
+  id_in: [Int!]
+  id_lt: Int
+  id_lte: Int
+  id_not: Int
+  id_not_gt: Int
+  id_not_gte: Int
+  id_not_in: [Int!]
+  id_not_lt: Int
+  id_not_lte: Int
+  name: String
+  name_contains: String
+  name_ends_with: String
+  name_in: [String!]
+  name_not: String
+  name_not_contains: String
+  name_not_ends_with: String
+  name_not_in: [String!]
+  name_not_starts_with: String
+  name_starts_with: String
+  OR: [FarmFilter!]
+  personId: Int
+  personId_gt: Int
+  personId_gte: Int
+  personId_in: [Int!]
+  personId_lt: Int
+  personId_lte: Int
+  personId_not: Int
+  personId_not_gt: Int
+  personId_not_gte: Int
+  personId_not_in: [Int!]
+  personId_not_lt: Int
+  personId_not_lte: Int
+}
+
+input FarmSort {
+  id: SortOperationKind
+  name: SortOperationKind
+  personId: SortOperationKind
+}
+
+"A connection to a list of items."
+type FarmConnection {
+  "A list of edges."
+  edges: [FarmEdge!]
+  "A flattened list of the nodes."
+  nodes: [Farm!]
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+enum SortOperationKind {
+  ASC
+  DESC
+}
+
+"Information about pagination in a connection."
+type PageInfo {
+  "When paginating forwards, the cursor to continue."
+  endCursor: String
+  "Indicates whether more edges exist following the set defined by the clients arguments."
+  hasNextPage: Boolean!
+  "Indicates whether more edges exist prior the set defined by the clients arguments."
+  hasPreviousPage: Boolean!
+  "When paginating backwards, the cursor to continue."
+  startCursor: String
+}
+
+"An edge in a connection."
+type AnimalEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: Animal!
+}
+
+"An edge in a connection."
+type PersonEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: Person!
+}
+
+"An edge in a connection."
+type FarmEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: Farm!
+}
+
+input PersonFilter {
+  AND: [PersonFilter!]
+  id: Int
+  id_gt: Int
+  id_gte: Int
+  id_in: [Int!]
+  id_lt: Int
+  id_lte: Int
+  id_not: Int
+  id_not_gt: Int
+  id_not_gte: Int
+  id_not_in: [Int!]
+  id_not_lt: Int
+  id_not_lte: Int
+  name: String
+  name_contains: String
+  name_ends_with: String
+  name_in: [String!]
+  name_not: String
+  name_not_contains: String
+  name_not_ends_with: String
+  name_not_in: [String!]
+  name_not_starts_with: String
+  name_starts_with: String
+  OR: [PersonFilter!]
+  secretPiggyBankLocation: String
+  secretPiggyBankLocation_contains: String
+  secretPiggyBankLocation_ends_with: String
+  secretPiggyBankLocation_in: [String]
+  secretPiggyBankLocation_not: String
+  secretPiggyBankLocation_not_contains: String
+  secretPiggyBankLocation_not_ends_with: String
+  secretPiggyBankLocation_not_in: [String]
+  secretPiggyBankLocation_not_starts_with: String
+  secretPiggyBankLocation_starts_with: String
+}
+
+input PersonSort {
+  id: SortOperationKind
+  name: SortOperationKind
+  secretPiggyBankLocation: SortOperationKind
+}
+
+type AddAnimalPayload {
+  animal: Animal
+  clientMutationId: String
+  errors: [UserError!]!
+}
+
+input AddAnimalInput {
+  clientMutationId: String
+  farmId: ID!
+  name: String!
+  species: String!
+}
+
+input UpdateAnimalInput {
+  clientMutationId: String
+  farmId: ID!
+  id: ID!
+  name: String!
+  species: String!
+}
+
+input DeleteAnimalInput {
+  clientMutationId: String
+  id: ID!
+}
+
+input RenameAnimalInput {
+  clientMutationId: String
+  id: ID!
+  name: String!
+}
+
+type UpdateAnimalPayload {
+  animal: Animal
+  clientMutationId: String
+  errors: [UserError!]!
+}
+
+type DeleteAnimalPayload {
+  animal: Animal
+  clientMutationId: String
+  errors: [UserError!]!
+}
+
+type RenameAnimalPayload {
+  animal: Animal
+  clientMutationId: String
+  errors: [UserError!]!
+}
+
+type RenameFarmPayload {
+  clientMutationId: String
+  errors: [UserError!]!
+  farm: Farm
+}
+
+input RenameFarmInput {
+  clientMutationId: String
+  id: ID!
+  name: String!
+}
+
+input ChangeFarmOwnerInput {
+  clientMutationId: String
+  farmId: ID!
+  newOwnerId: ID!
+}
+
+type ChangeFarmOwnerPayload {
+  clientMutationId: String
+  errors: [UserError!]!
+  farm: Farm
+}
+
+type AnimalMoved {
+  animal: Animal!
+  animalId: ID!
+  farmId: ID!
+}
+
+type UserError {
+  code: String!
+  message: String!
+}

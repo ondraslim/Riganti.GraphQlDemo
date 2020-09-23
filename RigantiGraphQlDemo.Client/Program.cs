@@ -1,76 +1,46 @@
-﻿using GraphQL;
-using GraphQL.Client.Http;
-using GraphQL.Client.Serializer.Newtonsoft;
-using RigantiGraphQlDemo.Client.ResponseModels;
-using System;
-using System.Net.WebSockets;
+﻿using System;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace RigantiGraphQlDemo.Client
 {
     class Program
     {
-        private static readonly GraphQLHttpClientOptions GraphQlHttpClientOptions = new GraphQLHttpClientOptions
+        static async Task Main()
         {
-            UseWebSocketForQueriesAndMutations = true,
-            EndPoint = new Uri("https://localhost:44329/GraphQL")
-        };
+            // wait for the server to start
+            Thread.Sleep(5000);
 
+            var provider = BuildServiceProvider();
+            var client = provider.GetRequiredService<ISchemaClient>();
 
-        static async Task Main(string[] args)
-        {
-            Console.WriteLine("configuring client ...");
-            using var client = new GraphQLHttpClient(GraphQlHttpClientOptions, new NewtonsoftJsonSerializer());
+            var farms = await client.FarmListAsync();
 
-            Console.WriteLine("subscribing to animal stream ...");
-
-            var errorSubscription = client.WebSocketReceiveErrors.Subscribe(e =>
+            if (farms.HasErrors)
             {
-                if (e is WebSocketException we)
-                    Console.WriteLine($"WebSocketException: {we.Message} " +
-                                      $"(WebSocketError {we.WebSocketErrorCode}, " +
-                                      $"ErrorCode {we.ErrorCode}, " +
-                                      $"NativeErrorCode {we.NativeErrorCode}");
-                else
-                    Console.WriteLine($"Exception in websocket receive stream: {e}");
-            });
-
-
-            Console.WriteLine("subscribing to farm ID 1");
-            var animalCreatedSubscription = CreateSubscription(client).Subscribe(
-                response =>
-                {
-                    if (response == null) return;
-
-                    Console.WriteLine($"new animal \"{response.Data.Name} - {response.Data.Species}\" in a farm of ID {response.Data.FarmId}");
-                },
-                exception => { Console.WriteLine($"subscription stream failed: {exception}"); },
-                () => { Console.WriteLine("subscription stream completed"); }
-                );
-            await Task.Delay(200);
-
-
-            Console.WriteLine("client setup completed");
-            while (true)
-            {
+                Console.WriteLine($"Got errors: { farms.Errors.Select(e => $"{e.Code}: {e.Message}") }" );
             }
 
-            errorSubscription.Dispose();
-            animalCreatedSubscription.Dispose();
+            foreach (var farm in farms.Data.Farms.Nodes)
+            {
+                Console.WriteLine($"Received farm '{farm.Name}' with ID {farm.Id}");
+            }
+
+            Console.ReadKey();
         }
 
 
-        private static IObservable<GraphQLResponse<AnimalCreatedModel>> CreateSubscription(GraphQLHttpClient client)
+        private static IServiceProvider BuildServiceProvider()
         {
-            return client.CreateSubscriptionStream<AnimalCreatedModel>(
-                new GraphQLRequest(@"
-					subscription AnimalAddedSubscription {
-                      animalCreatedInFarm(farm: 1) {
-                        id
-                        name
-                      }
-                    }"
-                ));
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddHttpClient(
+                "schemaClient",
+                c => c.BaseAddress = new Uri("https://localhost:5001"));
+            serviceCollection.AddschemaClient();
+
+            return serviceCollection.BuildServiceProvider();
         }
     }
 }
