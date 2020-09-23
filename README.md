@@ -2,7 +2,7 @@
 
 > This is just a brief demonstration of the GraphQL capabilities.
 
-#### Client
+### Client
 Client can be easily created using `GraphQL.Client` and `GraphQL.Client.Serializer.Newtonsoft` libraries.
 All you need to do is specify client options:
 
@@ -49,7 +49,7 @@ And then use client to create a request using `GraphQLHttpRequest` or subscribe:
 
 > There are some generation tools, but I have no experience with them yet (e.g. https://github.com/Husqvik/GraphQlClientGenerator)
 
-#### Authentication and Authorization
+### Authentication and Authorization
 
 GraphQL in dotnet provides **authorization** options through policies. We can define policies nad roles:
 
@@ -237,7 +237,7 @@ And if we make our faked user an admin, we have an access to the `SecretPiggyBan
 }
 ```
 
-#### Complexity configuration
+### Complexity configuration
 
 Executing a query based on client wishes can be dangerous and lead to easy DoS attacks. To prevent those, we can use `ComplexityConfiguration` of our GraphQL server:
 
