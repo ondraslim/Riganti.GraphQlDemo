@@ -1,13 +1,13 @@
 # GraphQL ASP.NET Core demo (4 - Subscriptions)
 
-###### Subscriptions
+### Subscriptions
 
 Subscriptions provide a way to notify clients of real-time changes through a push model (usually WebSocked-based).
 
 They are supported through the use of `IObservable<T>`. You will need a server that supports a Subscription protocol. The **GraphQL Server** project provides a .NET Core server that implements the *Apollo GraphQL* subscription protocol.
 
 
-###### Adding `IObservable<T>`
+### Adding `IObservable<T>`
 Let's suppose we want to know, when animal is created. To allow such subscription, we need to create an `IObservable<T>` collection of newly created Animals.
 Extract `AnimalDataStore` from general `DataStore` and add the required `IObservable<Animal>`:
 
@@ -34,7 +34,7 @@ It is also important to have `AnimalDataStore` registered in our *IoC container*
 
 `services.AddSingleton<IAnimalDataStore, AnimalDataStore>();`
 
-##### Impementing Subscriptions
+### Impementing Subscriptions
 Having the `AnimalDataStore` prepared, we can create a class `AnimalSubscriptions` to provide the subscriptions GraphQL feature by our server. We will expose one subscription called *animalCreatedInFarm* which will fire whenever an animal is created to all observers subscribed to a specific farm.
 
 Notable parts are `Resolver` and `Subscriber`. The does subscriptions class not have to be connected to an *Animal* entity, so we have to resolve the fired default object as an `Animal` type. `Subscriber` uses `EventStreamResolver` *(delegate for handling subscriptions on an event stream field)* and returns the newly created animals, to which the observer is subscribed:
@@ -81,7 +81,7 @@ public class AnimalSubscriptions : ObjectGraphType
 ```
 
 
-##### Enabling Subscriptions
+### Enabling Subscriptions
 
 We have to add created `AnimalSubscriptions` to our `AppSchema` as the Schema is the main part of GraphQL and dictates, what the server exposes:
 
@@ -117,7 +117,7 @@ app.UseGraphQLWebSockets<ISchema>();
 
 
 
-##### GraphQL Subscriptions demo
+### GraphQL Subscriptions demo
 > I decided to add `GraphQL.Playground` for easier testing of the subscriptions. The Playground will pop out on application startup.
 
 Now we are able to subscribe to an animal creation events using the following query:
