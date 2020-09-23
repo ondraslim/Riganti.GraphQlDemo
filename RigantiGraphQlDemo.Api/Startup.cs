@@ -53,7 +53,7 @@ namespace RigantiGraphQlDemo.Api
             // add graph ql
             app.UseGraphiQl("/GraphQL");
 
-            app.UseMiddleware<GraphQlMiddleware>();
+            //app.UseMiddleware<GraphQlMiddleware>();
             app.UseGraphQL<ISchema>();
 
             app.UseRouting();
