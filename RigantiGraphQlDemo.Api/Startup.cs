@@ -1,6 +1,5 @@
 using GraphiQl;
 using GraphQL;
-using GraphQL.DataLoader;
 using GraphQL.Server;
 using GraphQL.Server.Ui.Playground;
 using GraphQL.Server.Ui.Voyager;
@@ -11,7 +10,6 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RigantiGraphQlDemo.Api.GraphQL.Schema;
-using RigantiGraphQlDemo.Api.Middleware;
 using RigantiGraphQlDemo.Dal;
 using RigantiGraphQlDemo.Dal.DataStore.Animal;
 using RigantiGraphQlDemo.Dal.DataStore.Common;
@@ -62,7 +60,6 @@ namespace RigantiGraphQlDemo.Api
             app.UseWebSockets();
             app.UseGraphQLWebSockets<ISchema>();
 
-            app.UseMiddleware<GraphQlMiddleware>();
             app.UseGraphQL<ISchema>();
 
             // Add the GraphQL Playground UI to try out the GraphQL API at /
