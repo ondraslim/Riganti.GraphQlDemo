@@ -1,14 +1,14 @@
 # GraphQL ASP.NET Core demo (3 - DataLoaders)
 
-###### Minor project structure changes
+#### Minor project structure changes
 
 For the sake of clarity we created class `DataStore` and its interface `IDataStore` which handles all communication with database. The `DataStore` is registered in our IoC container and used in our `AppQuery` and `AnimalMutation`. Also our types definition style changed while the logic remained the same.
 
 
-###### Custom field resolver N+1 problem
-So far we used default resolver for our GraphQL reference types. We might want to have a custom resolver for some of the reference types to add custom logic (e.g. we might want to filter out soft-deleted *Farms* of a *Person* in his *Farms* or any other extra logic).
+### Custom field resolver
+So far we used `Include()`s to fetch our data, but that's not efficient as the client might not even be interested in the *included* data *(overfetching problem)*. For this purpose, we can use **resolvers** for specific *fields* of a GraphQL *type*. We can add a `Resolve()` *(or `ResolveAsync`)* to specific *fields* of a GraphQL *type* to speficy the *field* fetching strategy. This way we can also add custom logic (e.g. we might want to filter out soft-deleted *Farms* of a *Person* in his *Farms* or any other extra logic).
 
-To add custom resolve logic, we can add `ResolveAsync()` for *Persons Farms*:
+To add custom resolver, we can add `ResolveAsync()` for *Persons Farms*:
 
 ```csharp
 public class PersonType : ObjectGraphType<Person>
@@ -31,6 +31,8 @@ public class PersonType : ObjectGraphType<Person>
     }
 }
 ```
+
+### N+1 problem
 
 However after running a query to obtain persons and their farms:
 
@@ -66,13 +68,13 @@ WHERE @__personId_0 = "f"."PersonId"
 We have only 2 persons stored each one having his own farm, but 3 DB requests were made, therefore we have a `N + 1` problem.
 
 
-###### N+1 solution
+### N+1 solution
 
 To overcome this problem, we can use a `DataLoader`. They help in two ways:
 1. Similar operations are batched together. This can make fetching data over a network much more efficient.
 2. Fetched values are cached so if they are requested again, the cached value is returned.
 
-###### DataLoader - Middleware
+### DataLoader - Middleware
 
 Lets create our own GraphQL middleware class `GraphQlMiddleware`, which will add a `IDocumentExecutionListener` to the query exection options:
 
@@ -121,7 +123,9 @@ public class GraphQlMiddleware
 }
 ```
 
-We need to register `IDataLoaderContextAccessor` and `IDocumentExecutionListener` in our IoC container. This can be done using `IGraphQLBuilder` extension method `AddWebSockets()` in method `ConfigureServices()` of `Startup.cs`:
+Then we need to register `IDataLoaderContextAccessor` and `IDocumentExecutionListener` in our IoC container.
+
+However we can use just `IGraphQLBuilder` extension method `AddDataLoader()` in method `ConfigureServices()` of `Startup.cs`, which will do the same job as our custom middleware and IoC container registration of `IDataLoaderContextAccessor` and `IDocumentExecutionListener`:
 
 ```csharp
  services
@@ -130,7 +134,7 @@ We need to register `IDataLoaderContextAccessor` and `IDocumentExecutionListener
         .AddGraphTypes(ServiceLifetime.Scoped);
 ```
 
-###### DataLoader - usage
+### DataLoader - usage
 We will need to add new methods to our `IDataStore` which will help the `DataLoader` to optimize the queries execuction:
 
 ```csharp
@@ -203,7 +207,7 @@ public class FarmType : ObjectGraphType<Farm>
 > Notice, in our `PersonType` for `Farms`, we work with `ILookup` data structure instead of a dictionary. The only difference between them is ILookup can have multiple values against a single key whereas for the dictionary; a single key belongs to a single value.
 
 
-##### GraphQL DataLoaders demo
+### GraphQL DataLoaders demo
 
 Now using the same query as before, which resulted in N+1 problem:
 
