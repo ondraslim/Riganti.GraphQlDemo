@@ -4,6 +4,7 @@ using HotChocolate.Types.Relay;
 using Microsoft.EntityFrameworkCore;
 using RigantiGraphQlDemo.Api.Extensions;
 using RigantiGraphQlDemo.Api.GraphQL.DataLoaders.Person;
+using RigantiGraphQlDemo.Api.GraphQL.Types;
 using RigantiGraphQlDemo.Dal;
 using RigantiGraphQlDemo.Dal.Entities;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Query
     public class PersonQueries
     {
         [UseApplicationDbContext]
+        [UsePaging(SchemaType = typeof(NonNullType<PersonType>))]
         public Task<List<Person>> GetPersons([ScopedService] AnimalFarmDbContext db) =>
             db.Persons.OrderBy(p => p.Name).ToListAsync();
 

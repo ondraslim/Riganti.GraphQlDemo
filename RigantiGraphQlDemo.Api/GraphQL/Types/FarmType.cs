@@ -36,6 +36,7 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Types
             descriptor
                 .Field(x => x.Animals)
                 .Type<ListType<AnimalType>>()
+                .UsePaging<NonNullType<AnimalType>>()
                 .Description("Farm's animals.")
                 .ResolveWith<AnimalResolvers>(ar => ar.GetAnimalsByFarmIdsAsync(default!, default!, default));
         }
