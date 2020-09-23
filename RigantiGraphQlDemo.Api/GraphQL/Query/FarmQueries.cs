@@ -19,6 +19,8 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Query
     {
         [UseApplicationDbContext]
         [UsePaging(SchemaType = typeof(NonNullType<FarmType>))]
+        [UseFiltering]
+        [UseSorting]
         public Task<List<Farm>> GetFarms([ScopedService] AnimalFarmDbContext db) =>
             db.Farms.OrderBy(f => f.Name).ToListAsync();
 
