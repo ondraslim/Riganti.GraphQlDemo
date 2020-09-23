@@ -1,13 +1,13 @@
 ﻿using RigantiGraphQlDemo.Api.Exceptions;
-using RigantiGraphQlDemo.Api.GraphQL.Types.InputTypes.Common;
+using RigantiGraphQlDemo.Api.GraphQL.Types.InputTypes.Farm.Base;
 using System.Collections.Generic;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Types.InputTypes.Farm
 {
-    public class RenameFarmPayload : EntityPayloadBase<Dal.Entities.Farm>
+    public class RenameFarmPayload : FarmPayloadBase
     {
-        public RenameFarmPayload(Dal.Entities.Farm? entity, string? clientMutationId)
-            : base(entity, clientMutationId)
+        public RenameFarmPayload(Dal.Entities.Farm? farm, string? clientMutationId)
+            : base(farm, clientMutationId)
         {
         }
 

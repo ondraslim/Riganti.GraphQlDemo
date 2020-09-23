@@ -27,7 +27,7 @@ namespace RigantiGraphQlDemo.Api.GraphQL.DataLoaders.Farm
             try
             {
                 var farms = await dbContext.Farms.Where(f => keys.Contains(f.PersonId)).ToListAsync(cancellationToken);
-                return farms.ToLookup(t => t.Id);
+                return farms.ToLookup(t => t.PersonId);
             }
             finally
             {

@@ -25,7 +25,7 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Types
 
             descriptor
                 .Field(x => x.PersonId)
-                .Type<NonNullType<IdType>>()
+                .ID(nameof(Person))
                 .Description("The id of the Farm's owner.");
 
             descriptor

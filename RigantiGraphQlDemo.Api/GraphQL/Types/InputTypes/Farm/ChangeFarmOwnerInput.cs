@@ -7,6 +7,8 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Types.InputTypes.Farm
     {
         [ID(nameof(Dal.Entities.Farm))] 
         public int FarmId { get; }
+
+        [ID(nameof(Dal.Entities.Person))] 
         public int NewOwnerId { get; }
 
         public ChangeFarmOwnerInput(string? clientMutationId, int newOwnerId, int farmId)
