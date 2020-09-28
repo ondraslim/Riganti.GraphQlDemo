@@ -2,7 +2,7 @@
 
 ### Subscriptions
 
-Subscriptions provide a way to notify clients of real-time changes through a push model (usually WebSocked-based).
+Subscriptions provide a way to notify clients of real-time changes through a push model (usually WebSocket-based).
 
 They are supported through the use of `IObservable<T>`. You will need a server that supports a Subscription protocol. The **GraphQL Server** project provides a .NET Core server that implements the *Apollo GraphQL* subscription protocol.
 
