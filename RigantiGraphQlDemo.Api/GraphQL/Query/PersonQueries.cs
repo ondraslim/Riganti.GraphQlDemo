@@ -24,6 +24,12 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Query
         public Task<List<Person>> GetPersons([ScopedService] AnimalFarmDbContext db) =>
             db.Persons.OrderBy(p => p.Name).ToListAsync();
 
+
+        [UseApplicationDbContext]
+        [UseSelection]
+        public IQueryable<Person> GetPersonsSelection([ScopedService] AnimalFarmDbContext db) =>
+            db.Persons.AsQueryable();
+
         public Task<Person> GetPersonAsync(
             [ID(nameof(Person))] int id,
             PersonByIdDataLoader dataLoader,
