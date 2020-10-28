@@ -1,7 +1,7 @@
 ﻿using HotChocolate;
+using HotChocolate.AspNetCore.Authorization;
 using HotChocolate.Types;
 using HotChocolate.Types.Relay;
-using Microsoft.EntityFrameworkCore;
 using RigantiGraphQlDemo.Api.Extensions;
 using RigantiGraphQlDemo.Api.GraphQL.DataLoaders.Person;
 using RigantiGraphQlDemo.Api.GraphQL.Types;
@@ -18,11 +18,14 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Query
     public class PersonQueries
     {
         [UseApplicationDbContext]
+        [Authorize]
+        // [Authorize("POLICY/ROLE")]
         [UsePaging(SchemaType = typeof(NonNullType<PersonType>))]
         [UseFiltering]
         [UseSorting]
-        public Task<List<Person>> GetPersons([ScopedService] AnimalFarmDbContext db) =>
-            db.Persons.OrderBy(p => p.Name).ToListAsync();
+        public IOrderedQueryable<Person> GetPersons([ScopedService] AnimalFarmDbContext db) =>
+            // anything that returns IQueryable
+            db.Persons.OrderBy(p => p.Name);
 
 
         [UseApplicationDbContext]

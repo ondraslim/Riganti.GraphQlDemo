@@ -1,7 +1,6 @@
 ﻿using HotChocolate;
 using HotChocolate.Types;
 using HotChocolate.Types.Relay;
-using Microsoft.EntityFrameworkCore;
 using RigantiGraphQlDemo.Api.Extensions;
 using RigantiGraphQlDemo.Api.GraphQL.DataLoaders.Animal;
 using RigantiGraphQlDemo.Api.GraphQL.Types;
@@ -21,8 +20,8 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Query
         [UsePaging(SchemaType = typeof(NonNullType<AnimalType>))]
         [UseFiltering]
         [UseSorting]
-        public Task<List<Animal>> GetAnimals([ScopedService] AnimalFarmDbContext db) =>
-            db.Animals.OrderBy(a => a.Name).ToListAsync();
+        public IOrderedQueryable<Animal> GetAnimals([ScopedService] AnimalFarmDbContext db) =>
+            db.Animals.OrderBy(a => a.Name);
 
         public Task<Animal> GetAnimalAsync(
             [ID(nameof(Animal))] int id,
