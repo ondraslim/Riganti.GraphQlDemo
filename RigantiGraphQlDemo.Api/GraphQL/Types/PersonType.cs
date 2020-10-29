@@ -11,8 +11,8 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Types
     {
         protected override void Configure(IObjectTypeDescriptor<Person> descriptor)
         {
-            descriptor
-                .AsNode()
+            descriptor  
+                .AsNode()   // Relay
                 .IdField(x => x.Id)
                 .NodeResolver((context, id) =>
                     context.DataLoader<PersonByIdDataLoader>().LoadAsync(id, context.RequestAborted)); ;

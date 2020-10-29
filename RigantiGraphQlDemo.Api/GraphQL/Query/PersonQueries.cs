@@ -27,12 +27,6 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Query
             // anything that returns IQueryable
             db.Persons.OrderBy(p => p.Name);
 
-
-        [UseApplicationDbContext]
-        [UseSelection]
-        public IQueryable<Person> GetPersonsSelection([ScopedService] AnimalFarmDbContext db) =>
-            db.Persons.AsQueryable();
-
         public Task<Person> GetPersonAsync(
             [ID(nameof(Person))] int id,
             PersonByIdDataLoader dataLoader,

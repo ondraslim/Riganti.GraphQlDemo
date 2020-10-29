@@ -1,11 +1,7 @@
-﻿using HotChocolate;
-using HotChocolate.Types.Relay;
-using Microsoft.EntityFrameworkCore;
+﻿using HotChocolate.Types.Relay;
 using RigantiGraphQlDemo.Api.GraphQL.DataLoaders.Animal;
 using RigantiGraphQlDemo.Api.GraphQL.DataLoaders.Farm;
-using RigantiGraphQlDemo.Dal;
 using RigantiGraphQlDemo.Dal.Entities;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 

@@ -1,7 +1,5 @@
-using System.Threading.Tasks;
 using HotChocolate;
 using HotChocolate.AspNetCore;
-using HotChocolate.AspNetCore.Playground;
 using HotChocolate.AspNetCore.Voyager;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -71,14 +69,14 @@ namespace RigantiGraphQlDemo.Api
                     .AddAuthorizeDirectiveType()
                     .AddServices(sp)
                     .AddQueryType(q => q.Name("Query"))
-                    .AddType<PersonQueries>()
-                    .AddType<FarmQueries>()
-                    .AddType<AnimalQueries>()
+                        .AddType<PersonQueries>()
+                        .AddType<FarmQueries>()
+                        .AddType<AnimalQueries>()
                     .AddMutationType(d => d.Name("Mutation"))
-                    .AddType<AnimalMutation>()
-                    .AddType<FarmMutation>()
+                        .AddType<AnimalMutation>()
+                        .AddType<FarmMutation>()
                     .AddSubscriptionType(d => d.Name("Subscription"))
-                    .AddType<AnimalSubscriptions>()
+                        .AddType<AnimalSubscriptions>()
                     .AddType<AnimalType>()
                     .AddType<FarmType>()
                     .AddType<PersonType>()
@@ -105,7 +103,7 @@ namespace RigantiGraphQlDemo.Api
             app.UseRouting();
 
             app.UseAuthentication();
-            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseGraphQL();
 
