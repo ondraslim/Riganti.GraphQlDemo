@@ -1,22 +1,18 @@
-﻿using HotChocolate.Types;
-using HotChocolate.Types.Relay;
+﻿using RigantiGraphQlDemo.Dal.Entities.Common;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RigantiGraphQlDemo.Dal.Entities
 {
-    public class Person
+    public class Person : EntityBase
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        [Required]
+        [StringLength(100)]
+        public string? Name { get; set; }
 
-        public string Name { get; set; }
+        [StringLength(200)]
+        public string? SecretPiggyBankLocation { get; set; }
 
-        [UsePaging]
-        [UseSelection]
-        [UseFiltering]
-        public ICollection<Farm> Farms { get; set; }
+        public virtual ICollection<Farm> Farms { get; set; } = default!;
     }
 }

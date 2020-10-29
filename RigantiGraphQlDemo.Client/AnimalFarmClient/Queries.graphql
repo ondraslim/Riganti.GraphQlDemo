@@ -1,0 +1,9 @@
+﻿
+query farmList { 
+	farms { nodes { id, name } }
+}
+
+
+query animalList { 
+	animals { nodes { id, name, species, farmId }}
+}

@@ -2,7 +2,7 @@
 
 namespace RigantiGraphQlDemo.Dal.Migrations
 {
-    public partial class @int : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -12,7 +12,8 @@ namespace RigantiGraphQlDemo.Dal.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(nullable: true)
+                    Name = table.Column<string>(nullable: true),
+                    SecretPiggyBankLocation = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -26,7 +27,6 @@ namespace RigantiGraphQlDemo.Dal.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(nullable: true),
-                    Species = table.Column<string>(nullable: true),
                     PersonId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -60,6 +60,61 @@ namespace RigantiGraphQlDemo.Dal.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "Persons",
+                columns: new[] { "Id", "Name", "SecretPiggyBankLocation" },
+                values: new object[] { 1, "Mr. Jones", "In a dark cave." });
+
+            migrationBuilder.InsertData(
+                table: "Persons",
+                columns: new[] { "Id", "Name", "SecretPiggyBankLocation" },
+                values: new object[] { 2, "Mr. Whymper", "Does not have a piggy bank." });
+
+            migrationBuilder.InsertData(
+                table: "Farms",
+                columns: new[] { "Id", "Name", "PersonId" },
+                values: new object[] { 1, "Manor Farm", 1 });
+
+            migrationBuilder.InsertData(
+                table: "Farms",
+                columns: new[] { "Id", "Name", "PersonId" },
+                values: new object[] { 2, "AnimalFarm", 2 });
+
+            migrationBuilder.InsertData(
+                table: "Animals",
+                columns: new[] { "Id", "FarmId", "Name", "Species" },
+                values: new object[] { 1, 1, "Napoleon", "Pig" });
+
+            migrationBuilder.InsertData(
+                table: "Animals",
+                columns: new[] { "Id", "FarmId", "Name", "Species" },
+                values: new object[] { 2, 1, "Snowball", "Pig" });
+
+            migrationBuilder.InsertData(
+                table: "Animals",
+                columns: new[] { "Id", "FarmId", "Name", "Species" },
+                values: new object[] { 3, 1, "Boxer", "Horse" });
+
+            migrationBuilder.InsertData(
+                table: "Animals",
+                columns: new[] { "Id", "FarmId", "Name", "Species" },
+                values: new object[] { 4, 1, "Moses", "Raven" });
+
+            migrationBuilder.InsertData(
+                table: "Animals",
+                columns: new[] { "Id", "FarmId", "Name", "Species" },
+                values: new object[] { 5, 1, "Benjamin", "Donkey" });
+
+            migrationBuilder.InsertData(
+                table: "Animals",
+                columns: new[] { "Id", "FarmId", "Name", "Species" },
+                values: new object[] { 6, 2, "AnonymousCat", "Cat" });
+
+            migrationBuilder.InsertData(
+                table: "Animals",
+                columns: new[] { "Id", "FarmId", "Name", "Species" },
+                values: new object[] { 7, 2, "AnonymousGoat", "Goat" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Animals_FarmId",
