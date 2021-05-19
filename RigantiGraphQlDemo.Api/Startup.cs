@@ -50,38 +50,30 @@ namespace RigantiGraphQlDemo.Api
 
             #region GraphQL
 
-            // DataLoaders
-            services.AddDataLoaderRegistry();
-            services.AddDataLoader<PersonByIdDataLoader>();
-            
-            services.AddDataLoader<FarmByIdDataLoader>();
-            services.AddDataLoader<FarmsByPersonIdDataLoader>();
-
-            services.AddDataLoader<AnimalByFarmIdDataLoader>();
-            services.AddDataLoader<AnimalByFarmIdDataLoader>();
-
-            // Subscriptions
-            services.AddInMemorySubscriptions();
-
             // schema
             services
-                .AddGraphQL(sp => SchemaBuilder.New()
-                    .AddAuthorizeDirectiveType()
-                    .AddServices(sp)
-                    .AddQueryType(q => q.Name("Query"))
-                        .AddType<PersonQueries>()
-                        .AddType<FarmQueries>()
-                        .AddType<AnimalQueries>()
-                    .AddMutationType(d => d.Name("Mutation"))
-                        .AddType<AnimalMutation>()
-                        .AddType<FarmMutation>()
-                    .AddSubscriptionType(d => d.Name("Subscription"))
-                        .AddType<AnimalSubscriptions>()
+                .AddGraphQLServer()
+                .AddAuthorization()
+                .AddQueryType(q => q.Name("Query"))
+                    .AddType<PersonQueries>()
+                    .AddType<FarmQueries>()
+                    .AddType<AnimalQueries>()
+                .AddMutationType(d => d.Name("Mutation"))
+                    .AddType<AnimalMutation>()
+                    .AddType<FarmMutation>()
+                .AddSubscriptionType(d => d.Name("Subscription"))
+                    .AddType<AnimalSubscriptions>()
                     .AddType<AnimalType>()
                     .AddType<FarmType>()
                     .AddType<PersonType>()
-                    .EnableRelaySupport()
-                    .Create());
+                .EnableRelaySupport()
+                .AddInMemorySubscriptions()     // Subscriptions
+                .AddDataLoader<PersonByIdDataLoader>()      // DataLoaders
+                .AddDataLoader<FarmByIdDataLoader>()
+                .AddDataLoader<FarmsByPersonIdDataLoader>()
+                .AddDataLoader<AnimalByFarmIdDataLoader>()
+                .AddDataLoader<AnimalByFarmIdDataLoader>()
+                ;
             #endregion
 
             // auth
@@ -105,8 +97,7 @@ namespace RigantiGraphQlDemo.Api
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseGraphQL();
-
+            app.UseEndpoints(x => x.MapGraphQL());
             // Add the GraphQL Playground UI to try out the GraphQL API at /
             // Add the GraphQL Voyager UI to let you navigate your GraphQL API as a spider graph at /voyager.
             app

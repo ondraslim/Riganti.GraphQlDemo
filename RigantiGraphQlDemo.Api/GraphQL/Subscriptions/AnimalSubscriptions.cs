@@ -1,11 +1,11 @@
 ﻿using HotChocolate;
+using HotChocolate.Execution;
 using HotChocolate.Subscriptions;
 using HotChocolate.Types;
 using HotChocolate.Types.Relay;
 using RigantiGraphQlDemo.Api.GraphQL.DataLoaders.Animal;
 using RigantiGraphQlDemo.Api.GraphQL.DataLoaders.Farm;
 using RigantiGraphQlDemo.Dal.Entities;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -36,7 +36,7 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Subscriptions
             CancellationToken token) =>
             new AnimalMoved(animalId, farmId);
 
-        public async ValueTask<IAsyncEnumerable<int>> SubscribeToOnAnimalMovedToFarmAsync(
+        public async ValueTask<ISourceStream<int>> SubscribeToOnAnimalMovedToFarmAsync(
             int farmId,
             [Service] ITopicEventReceiver eventReceiver,
             CancellationToken token) =>

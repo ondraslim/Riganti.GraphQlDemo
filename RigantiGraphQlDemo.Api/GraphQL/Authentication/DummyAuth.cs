@@ -21,6 +21,16 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Authentication
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
+            var claimsss = new List<Claim> {
+                new Claim(ClaimTypes.NameIdentifier, "LoggedInUser")
+            };
+            return Task.FromResult(
+                AuthenticateResult.Success(
+                    new AuthenticationTicket(
+                        new ClaimsPrincipal(
+                            new ClaimsIdentity(claimsss, Scheme.Name)),
+                        Scheme.Name)));
+
             // dummy auth
             if (Request.Headers.TryGetValue("Authentication", out var key) && key == "authenticated")
             {

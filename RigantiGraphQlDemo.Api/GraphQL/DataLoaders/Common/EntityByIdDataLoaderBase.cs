@@ -1,4 +1,5 @@
-﻿using HotChocolate.DataLoader;
+﻿using GreenDonut;
+using HotChocolate.DataLoader;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using RigantiGraphQlDemo.Dal;
@@ -16,7 +17,11 @@ namespace RigantiGraphQlDemo.Api.GraphQL.DataLoaders.Common
     {
         private readonly DbContextPool<AnimalFarmDbContext> dbContextPool;
 
-        public EntityByIdDataLoaderBase(DbContextPool<AnimalFarmDbContext> dbContextPool)
+        public EntityByIdDataLoaderBase(
+            DbContextPool<AnimalFarmDbContext> dbContextPool,
+            IBatchScheduler batchScheduler,
+            DataLoaderOptions<int>? options = null)
+            : base(batchScheduler, options)
         {
             this.dbContextPool = dbContextPool ?? throw new ArgumentNullException(nameof(dbContextPool));
         }

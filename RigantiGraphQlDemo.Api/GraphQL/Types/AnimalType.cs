@@ -1,6 +1,5 @@
 ﻿using HotChocolate.Resolvers;
 using HotChocolate.Types;
-using HotChocolate.Types.Relay;
 using RigantiGraphQlDemo.Api.Extensions;
 using RigantiGraphQlDemo.Api.GraphQL.DataLoaders.Animal;
 using RigantiGraphQlDemo.Api.GraphQL.Resolvers;
@@ -13,10 +12,11 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Types
         protected override void Configure(IObjectTypeDescriptor<Animal> descriptor)
         {
             descriptor
-                .AsNode()
+                .ImplementsNode()
                 .IdField(x => x.Id)
-                .NodeResolver((context, id) =>
-                    context.DataLoader<AnimalByIdDataLoader>().LoadAsync(id, context.RequestAborted));
+                .ResolveNode((context, id) =>
+                    context.DataLoader<AnimalByIdDataLoader>()
+                        .LoadAsync(id, context.RequestAborted));
 
             descriptor
                 .Field(x => x.Name)
