@@ -1,5 +1,5 @@
 ﻿using GreenDonut;
-using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.EntityFrameworkCore;
 using RigantiGraphQlDemo.Api.GraphQL.DataLoaders.Common;
 using RigantiGraphQlDemo.Dal;
 
@@ -8,10 +8,10 @@ namespace RigantiGraphQlDemo.Api.GraphQL.DataLoaders.Animal
     public class AnimalByIdDataLoader : EntityByIdDataLoaderBase<Dal.Entities.Animal>
     {
         public AnimalByIdDataLoader(
-            DbContextPool<AnimalFarmDbContext> dbContextPool,
+            IDbContextFactory<AnimalFarmDbContext> dbContextFactory,
             IBatchScheduler batchScheduler,
             DataLoaderOptions<int>? options = null)
-            : base(dbContextPool, batchScheduler, options)
+            : base(dbContextFactory, batchScheduler, options)
         {
         }
     }

@@ -14,11 +14,11 @@ using System.Threading.Tasks;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Query
 {
-    [ExtendObjectType(Name = "Query")]
+    [ExtendObjectType("Query")]
     public class AnimalQueries
     {
         [UseApplicationDbContext]
-        [UsePaging(SchemaType = typeof(NonNullType<AnimalType>))]
+        [UsePaging(typeof(NonNullType<AnimalType>))]
         [UseFiltering]
         [UseSorting]
         public IOrderedQueryable<Animal> GetAnimals([ScopedService] AnimalFarmDbContext db) =>

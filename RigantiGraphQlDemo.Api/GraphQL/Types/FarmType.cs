@@ -1,7 +1,9 @@
 ﻿using HotChocolate.Resolvers;
 using HotChocolate.Types;
+using RigantiGraphQlDemo.Api.Extensions;
 using RigantiGraphQlDemo.Api.GraphQL.DataLoaders.Farm;
 using RigantiGraphQlDemo.Api.GraphQL.Resolvers;
+using RigantiGraphQlDemo.Dal;
 using RigantiGraphQlDemo.Dal.Entities;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Types
@@ -40,7 +42,8 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Types
                 .UseFiltering()
                 .UseSorting()
                 .Description("Farm's animals.")
-                .ResolveWith<AnimalResolvers>(ar => ar.GetAnimalsByFarmIdsAsync(default!, default!, default));
+                .ResolveWith<AnimalResolvers>(ar => ar.GetAnimalsByFarmIdsAsync(default!, default!, default))
+                .UseDbContext<AnimalFarmDbContext>();
         }
     }
 }

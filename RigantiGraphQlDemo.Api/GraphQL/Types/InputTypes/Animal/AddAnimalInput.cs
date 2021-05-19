@@ -3,21 +3,10 @@ using RigantiGraphQlDemo.Api.GraphQL.Types.InputTypes.Common;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Types.InputTypes.Animal
 {
-    public class AddAnimalInput : InputBase
-    {
-        public string Name { get; }
-        public string Species { get; }
-
-        [ID(nameof(Farm))]
-        public int FarmId { get; }
-
-
-        public AddAnimalInput(string name, string species, int farmId, string clientMutationId)
-            : base(clientMutationId)
-        {
-            Name = name;
-            Species = species;
-            FarmId = farmId;
-        }
-    }
+    public record AddAnimalInput(
+            string Name,
+            string Species,
+            [ID(nameof(Farm))] int FarmId,
+            string ClientMutationId)
+        : InputBase(ClientMutationId);
 }

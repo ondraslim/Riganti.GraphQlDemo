@@ -1,6 +1,5 @@
 ﻿using HotChocolate.Types;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace RigantiGraphQlDemo.Api.Extensions
@@ -12,8 +11,8 @@ namespace RigantiGraphQlDemo.Api.Extensions
             where TDbContext : DbContext
         {
             return descriptor.UseScopedService(
-                create: s => s.GetRequiredService<DbContextPool<TDbContext>>().Rent(),
-                dispose: (s, c) => s.GetRequiredService<DbContextPool<TDbContext>>().Return(c));
+                create: s => s.GetRequiredService<IDbContextFactory<TDbContext>>().CreateDbContext(),
+                disposeAsync: (s, c) => c.DisposeAsync());
         }
 
         public static IObjectFieldDescriptor UseUpperCase(

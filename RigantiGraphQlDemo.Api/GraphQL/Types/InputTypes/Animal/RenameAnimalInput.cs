@@ -3,17 +3,9 @@ using RigantiGraphQlDemo.Api.GraphQL.Types.InputTypes.Common;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Types.InputTypes.Animal
 {
-    public class RenameAnimalInput : InputBase
-    {
-        [ID(nameof(Dal.Entities.Animal))]
-        public int Id { get; }
-        public string Name { get; }
-
-        public RenameAnimalInput(string? clientMutationId, string name, int id)
-            : base(clientMutationId)
-        {
-            Name = name;
-            Id = id;
-        }
-    }
+    public record RenameAnimalInput(
+            [ID(nameof(Dal.Entities.Animal))] int Id,
+            string Name,
+            string? ClientMutationId)
+        : InputBase(ClientMutationId);
 }

@@ -22,7 +22,7 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Authentication
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             var claimsss = new List<Claim> {
-                new Claim(ClaimTypes.NameIdentifier, "LoggedInUser")
+                new(ClaimTypes.NameIdentifier, "LoggedInUser")
             };
             return Task.FromResult(
                 AuthenticateResult.Success(
@@ -35,7 +35,7 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Authentication
             if (Request.Headers.TryGetValue("Authentication", out var key) && key == "authenticated")
             {
                 var claims = new List<Claim> {
-                    new Claim(ClaimTypes.NameIdentifier, "LoggedInUser")
+                    new(ClaimTypes.NameIdentifier, "LoggedInUser")
                 };
                 return Task.FromResult(
                     AuthenticateResult.Success(

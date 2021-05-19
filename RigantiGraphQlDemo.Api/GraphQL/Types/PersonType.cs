@@ -1,7 +1,9 @@
 ﻿using HotChocolate.Resolvers;
 using HotChocolate.Types;
+using RigantiGraphQlDemo.Api.Extensions;
 using RigantiGraphQlDemo.Api.GraphQL.DataLoaders.Person;
 using RigantiGraphQlDemo.Api.GraphQL.Resolvers;
+using RigantiGraphQlDemo.Dal;
 using RigantiGraphQlDemo.Dal.Entities;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Types
@@ -24,6 +26,7 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Types
 
             descriptor
                 .Field(x => x.SecretPiggyBankLocation)
+                //.Ignore()
                 .Type<StringType>()
                 .Description("Secret location of person's piggy bank. (should not be available!)");
 
@@ -34,7 +37,8 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Types
                 .UseFiltering()
                 .UseSorting()
                 .Description("Farms owned by the Person.")
-                .ResolveWith<FarmResolvers>(fr => fr.GetFarmsByPersonIdsAsync(default!, default!, default));
+                .ResolveWith<FarmResolvers>(fr => fr.GetFarmsByPersonIdsAsync(default!, default!, default))
+                .UseDbContext<AnimalFarmDbContext>();
         }
     }
 }

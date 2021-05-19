@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace RigantiGraphQlDemo.Api.GraphQL.Mutations
 {
 
-    [ExtendObjectType(Name = "Mutation")]
+    [ExtendObjectType("Mutation")]
     public class FarmMutation
     {
         [UseApplicationDbContext]
@@ -24,7 +24,7 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Mutations
             if (farm is null)
             {
                 return new RenameFarmPayload(
-                    new List<UserError> { new UserError("Farm not found.", "ANIMAL_NOT_FOUND") },
+                    new List<UserError> { new("Farm not found.", "ANIMAL_NOT_FOUND") },
                     input.ClientMutationId);
             }
 
@@ -45,7 +45,7 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Mutations
             if (farm is null)
             {
                 return new ChangeFarmOwnerPayload(
-                    new List<UserError> { new UserError("Farm not found.", "ANIMAL_NOT_FOUND") },
+                    new List<UserError> { new("Farm not found.", "ANIMAL_NOT_FOUND") },
                     input.ClientMutationId);
             }
 

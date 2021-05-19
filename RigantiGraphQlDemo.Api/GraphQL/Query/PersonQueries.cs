@@ -15,13 +15,14 @@ using System.Threading.Tasks;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Query
 {
-    [ExtendObjectType(Name = "Query")]
+    [ExtendObjectType("Query")]
     public class PersonQueries
     {
         [UseApplicationDbContext]
         [Authorize]
         // [Authorize("POLICY/ROLE")]
-        [UsePaging(SchemaType = typeof(NonNullType<PersonType>))]
+        [UseProjection]
+        [UsePaging(typeof(NonNullType<PersonType>))]
         [UseFiltering]
         [UseSorting]
         public IOrderedQueryable<Person> GetPersons([ScopedService] AnimalFarmDbContext db) =>

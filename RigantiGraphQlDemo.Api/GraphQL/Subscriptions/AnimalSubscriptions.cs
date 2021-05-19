@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Subscriptions
 {
-    [ExtendObjectType(Name = "Subscription")]
+    [ExtendObjectType("Subscription")]
     public class AnimalSubscriptions
     {
         /*
@@ -34,7 +34,7 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Subscriptions
             [EventMessage] int animalId,
             FarmByIdDataLoader dataLoader,
             CancellationToken token) =>
-            new AnimalMoved(animalId, farmId);
+            new(animalId, farmId);
 
         public async ValueTask<ISourceStream<int>> SubscribeToOnAnimalMovedToFarmAsync(
             int farmId,
