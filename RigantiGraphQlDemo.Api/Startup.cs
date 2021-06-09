@@ -93,10 +93,6 @@ namespace RigantiGraphQlDemo.Api
             app.UseAuthorization();
 
             app.UseEndpoints(x => x.MapGraphQL("/"));
-            
-            // TODO: remove playground - banana cake pop added as default
-            // Add the GraphQL Playground UI to try out the GraphQL API at /playground
-            app.UsePlayground(new PathString("/playground"));
         }
     }
 }
