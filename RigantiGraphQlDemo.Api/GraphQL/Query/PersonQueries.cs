@@ -21,7 +21,6 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Query
         [UseApplicationDbContext]
         [Authorize]
         // [Authorize("POLICY/ROLE")]
-        [UseProjection]
         [UsePaging(typeof(NonNullType<PersonType>))]
         [UseFiltering]
         [UseSorting]
