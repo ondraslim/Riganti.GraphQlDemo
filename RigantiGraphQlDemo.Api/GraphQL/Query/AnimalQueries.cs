@@ -21,8 +21,7 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Query
         [UsePaging(typeof(NonNullType<AnimalType>))]
         [UseFiltering]
         [UseSorting]
-        public IOrderedQueryable<Animal> GetAnimals([ScopedService] AnimalFarmDbContext db) =>
-            db.Animals.OrderBy(a => a.Name);
+        public IQueryable<Animal> GetAnimals([ScopedService] AnimalFarmDbContext db) => db.Animals;
 
         public Task<Animal> GetAnimalAsync(
             [ID(nameof(Animal))] int id,

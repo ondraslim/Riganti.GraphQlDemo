@@ -21,24 +21,22 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Types
 
             descriptor
                 .Field(x => x.Name)
-                .Type<StringType>()
                 .Description("Name of the Person.");
 
             descriptor
                 .Field(x => x.SecretPiggyBankLocation)
-                //.Ignore()
-                .Type<StringType>()
+                .Ignore()           // removes from schema, request for the field are not valid
+                //  .Authorize()    // allow only specific users to access the field - policy/roles
                 .Description("Secret location of person's piggy bank. (should not be available!)");
 
             descriptor
                 .Field(x => x.Farms)
-                .Type<ListType<FarmType>>()
+                .ResolveWith<FarmResolvers>(fr => fr.GetFarmsByPersonIdsAsync(default!, default!, default))
+                .UseDbContext<AnimalFarmDbContext>()
                 .UsePaging<NonNullType<FarmType>>()
                 .UseFiltering()
                 .UseSorting()
-                .Description("Farms owned by the Person.")
-                .ResolveWith<FarmResolvers>(fr => fr.GetFarmsByPersonIdsAsync(default!, default!, default))
-                .UseDbContext<AnimalFarmDbContext>();
+                .Description("Farms owned by the Person.");
         }
     }
 }

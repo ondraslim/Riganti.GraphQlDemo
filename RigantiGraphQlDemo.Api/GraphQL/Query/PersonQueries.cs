@@ -20,13 +20,11 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Query
     {
         [UseApplicationDbContext]
         [Authorize]
-        // [Authorize("POLICY/ROLE")]
         [UsePaging(typeof(NonNullType<PersonType>))]
         [UseFiltering]
         [UseSorting]
-        public IOrderedQueryable<Person> GetPersons([ScopedService] AnimalFarmDbContext db) =>
-            // anything that returns IQueryable
-            db.Persons.OrderBy(p => p.Name);
+        // anything that returns IQueryable
+        public IQueryable<Person> GetPersons([ScopedService] AnimalFarmDbContext db) => db.Persons;
 
         public Task<Person> GetPersonAsync(
             [ID(nameof(Person))] int id,

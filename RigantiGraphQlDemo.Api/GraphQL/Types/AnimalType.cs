@@ -21,12 +21,10 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Types
 
             descriptor
                 .Field(x => x.Name)
-                .Type<StringType>()
                 .Description("The name of the Animal.");
 
             descriptor
                 .Field(x => x.Species)
-                .Type<StringType>()
                 .UseUpperCase()
                 .Description("The species of the Animal.");
 
@@ -37,7 +35,6 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Types
 
             descriptor
                 .Field(x => x.Farm)
-                .Type<FarmType>()
                 .ResolveWith<FarmResolvers>(r => r.GetFarmsByIdsAsync(default!, default!, default))
                 .UseDbContext<AnimalFarmDbContext>()
                 .Description("The farm where the Animal lives.");

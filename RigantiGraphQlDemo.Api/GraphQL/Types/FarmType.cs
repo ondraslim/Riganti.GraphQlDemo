@@ -21,7 +21,6 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Types
 
             descriptor
                 .Field(x => x.Name)
-                .Type<StringType>()
                 .Description("The name of the Farm.");
 
 
@@ -32,18 +31,16 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Types
 
             descriptor
                 .Field(x => x.Person)
-                .Type<PersonType>()
                 .Description("Farm's owner.");
 
             descriptor
                 .Field(x => x.Animals)
-                .Type<ListType<AnimalType>>()
+                .ResolveWith<AnimalResolvers>(ar => ar.GetAnimalsByFarmIdsAsync(default!, default!, default))
+                .UseDbContext<AnimalFarmDbContext>()
                 .UsePaging<NonNullType<AnimalType>>()
                 .UseFiltering()
                 .UseSorting()
-                .Description("Farm's animals.")
-                .ResolveWith<AnimalResolvers>(ar => ar.GetAnimalsByFarmIdsAsync(default!, default!, default))
-                .UseDbContext<AnimalFarmDbContext>();
+                .Description("Farm's animals.");
         }
     }
 }

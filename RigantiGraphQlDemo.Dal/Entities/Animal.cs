@@ -11,8 +11,8 @@ namespace RigantiGraphQlDemo.Dal.Entities
 
         [StringLength(200)]
         public string? Species { get; set; }
-        public int FarmId { get; set; }
 
+        public int FarmId { get; set; }
         public virtual Farm Farm { get; set; } = default!;
     }
 }
