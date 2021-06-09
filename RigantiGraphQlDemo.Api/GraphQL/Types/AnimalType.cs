@@ -2,8 +2,6 @@
 using HotChocolate.Types;
 using RigantiGraphQlDemo.Api.Extensions;
 using RigantiGraphQlDemo.Api.GraphQL.DataLoaders.Animal;
-using RigantiGraphQlDemo.Api.GraphQL.Resolvers;
-using RigantiGraphQlDemo.Dal;
 using RigantiGraphQlDemo.Dal.Entities;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Types
@@ -35,8 +33,7 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Types
 
             descriptor
                 .Field(x => x.Farm)
-                .ResolveWith<FarmResolvers>(r => r.GetFarmsByIdsAsync(default!, default!, default))
-                .UseDbContext<AnimalFarmDbContext>()
+                .UseProjection()
                 .Description("The farm where the Animal lives.");
 
         }

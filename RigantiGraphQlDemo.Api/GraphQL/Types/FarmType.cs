@@ -35,9 +35,8 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Types
 
             descriptor
                 .Field(x => x.Animals)
-                .ResolveWith<AnimalResolvers>(ar => ar.GetAnimalsByFarmIdsAsync(default!, default!, default))
-                .UseDbContext<AnimalFarmDbContext>()
                 .UsePaging<NonNullType<AnimalType>>()
+                .UseProjection()
                 .UseFiltering()
                 .UseSorting()
                 .Description("Farm's animals.");
