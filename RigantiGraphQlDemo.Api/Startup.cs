@@ -61,7 +61,6 @@ namespace RigantiGraphQlDemo.Api
                 .AddType<FarmType>()
                 .AddType<PersonType>()
                 .AddFiltering()
-                .AddProjections()
                 .AddSorting()
                 .EnableRelaySupport()
                 .AddInMemorySubscriptions()     // Subscriptions

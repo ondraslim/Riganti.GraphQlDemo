@@ -21,7 +21,6 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Query
         [UseApplicationDbContext]
         [Authorize]
         [UsePaging(typeof(NonNullType<PersonType>))]
-        [UseProjection]
         [UseFiltering]
         [UseSorting]
         // anything that returns IQueryable

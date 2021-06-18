@@ -19,7 +19,6 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Query
     {
         [UseApplicationDbContext]
         [UsePaging(typeof(NonNullType<FarmType>))]
-        [UseProjection]
         [UseFiltering]
         [UseSorting]
         public IQueryable<Farm> GetFarms([ScopedService] AnimalFarmDbContext db) => db.Farms;

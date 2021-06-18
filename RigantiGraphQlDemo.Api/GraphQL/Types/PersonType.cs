@@ -31,8 +31,9 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Types
 
             descriptor
                 .Field(x => x.Farms)
+                .ResolveWith<FarmResolvers>(fr => fr.GetFarmsByPersonIdsAsync(default!, default!, default))
+                .UseDbContext<AnimalFarmDbContext>()
                 .UsePaging<NonNullType<FarmType>>()
-                .UseProjection()
                 .UseFiltering()
                 .UseSorting()
                 .Description("Farms owned by the Person.");
