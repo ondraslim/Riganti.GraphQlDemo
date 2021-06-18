@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using StrawberryShake;
+﻿using StrawberryShake;
+using System;
 
 namespace RigantiGraphQlDemo.Client
 {
     public class Queries
         : IDocument
     {
-        private readonly byte[] _hashName = new byte[]
-        {
+        private readonly byte[] _hashName = {
             109,
             100,
             53,
@@ -18,8 +15,7 @@ namespace RigantiGraphQlDemo.Client
             115,
             104
         };
-        private readonly byte[] _hash = new byte[]
-        {
+        private readonly byte[] _hash = {
             117,
             87,
             74,
@@ -45,8 +41,7 @@ namespace RigantiGraphQlDemo.Client
             61,
             61
         };
-        private readonly byte[] _content = new byte[]
-        {
+        private readonly byte[] _content = {
             113,
             117,
             101,
@@ -211,7 +206,7 @@ namespace RigantiGraphQlDemo.Client
 
         public ReadOnlySpan<byte> Content => _content;
 
-        public static Queries Default { get; } = new Queries();
+        public static Queries Default { get; } = new();
 
         public override string ToString() => 
             @"query farmList {

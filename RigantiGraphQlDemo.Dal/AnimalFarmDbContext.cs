@@ -15,7 +15,6 @@ namespace RigantiGraphQlDemo.Dal
             
         }
 
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Person>()

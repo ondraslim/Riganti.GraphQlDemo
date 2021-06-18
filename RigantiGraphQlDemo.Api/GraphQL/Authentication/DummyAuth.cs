@@ -22,10 +22,10 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Authentication
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             // dummy auth
-            if (Request.Headers.TryGetValue("Authentication", out var key) && key == "authenticated")
+            if (Request.Headers.TryGetValue("Authentication", out var token) && token == "authenticated")
             {
                 var claims = new List<Claim> {
-                    new Claim(ClaimTypes.NameIdentifier, "LoggedInUser")
+                    new(ClaimTypes.NameIdentifier, "LoggedInUser")
                 };
                 return Task.FromResult(
                     AuthenticateResult.Success(

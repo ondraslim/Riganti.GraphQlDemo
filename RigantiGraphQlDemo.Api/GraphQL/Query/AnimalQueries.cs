@@ -1,4 +1,5 @@
 ﻿using HotChocolate;
+using HotChocolate.Data;
 using HotChocolate.Types;
 using HotChocolate.Types.Relay;
 using RigantiGraphQlDemo.Api.Extensions;
@@ -13,15 +14,14 @@ using System.Threading.Tasks;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Query
 {
-    [ExtendObjectType(Name = "Query")]
+    [ExtendObjectType("Query")]
     public class AnimalQueries
     {
         [UseApplicationDbContext]
-        [UsePaging(SchemaType = typeof(NonNullType<AnimalType>))]
+        [UsePaging(typeof(NonNullType<AnimalType>))]
         [UseFiltering]
         [UseSorting]
-        public IOrderedQueryable<Animal> GetAnimals([ScopedService] AnimalFarmDbContext db) =>
-            db.Animals.OrderBy(a => a.Name);
+        public IQueryable<Animal> GetAnimals([ScopedService] AnimalFarmDbContext db) => db.Animals;
 
         public Task<Animal> GetAnimalAsync(
             [ID(nameof(Animal))] int id,

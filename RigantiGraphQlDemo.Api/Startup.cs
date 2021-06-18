@@ -1,6 +1,4 @@
-using HotChocolate;
 using HotChocolate.AspNetCore;
-using HotChocolate.AspNetCore.Voyager;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -31,8 +29,6 @@ namespace RigantiGraphQlDemo.Api
             this.configuration = configuration;
         }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             // logger
@@ -41,48 +37,38 @@ namespace RigantiGraphQlDemo.Api
                 .CreateLogger();
 
             // db
-            services.AddDbContextPool<AnimalFarmDbContext>(
+            services.AddPooledDbContextFactory<AnimalFarmDbContext>(
                 opt =>
                 {
                     opt.UseSqlite("Data Source=animalFarm.db");
                     opt.UseLoggerFactory(LoggerFactory.Create(builder => { builder.AddDebug(); }));
                 });
 
-            #region GraphQL
-
-            // DataLoaders
-            services.AddDataLoaderRegistry();
-            services.AddDataLoader<PersonByIdDataLoader>();
-            
-            services.AddDataLoader<FarmByIdDataLoader>();
-            services.AddDataLoader<FarmsByPersonIdDataLoader>();
-
-            services.AddDataLoader<AnimalByFarmIdDataLoader>();
-            services.AddDataLoader<AnimalByFarmIdDataLoader>();
-
-            // Subscriptions
-            services.AddInMemorySubscriptions();
-
             // schema
             services
-                .AddGraphQL(sp => SchemaBuilder.New()
-                    .AddAuthorizeDirectiveType()
-                    .AddServices(sp)
-                    .AddQueryType(q => q.Name("Query"))
-                        .AddType<PersonQueries>()
-                        .AddType<FarmQueries>()
-                        .AddType<AnimalQueries>()
-                    .AddMutationType(d => d.Name("Mutation"))
-                        .AddType<AnimalMutation>()
-                        .AddType<FarmMutation>()
-                    .AddSubscriptionType(d => d.Name("Subscription"))
-                        .AddType<AnimalSubscriptions>()
-                    .AddType<AnimalType>()
-                    .AddType<FarmType>()
-                    .AddType<PersonType>()
-                    .EnableRelaySupport()
-                    .Create());
-            #endregion
+                .AddGraphQLServer()
+                .AddAuthorization()
+                .AddQueryType(q => q.Name("Query"))
+                    .AddTypeExtension<PersonQueries>()
+                    .AddTypeExtension<FarmQueries>()
+                    .AddTypeExtension<AnimalQueries>()
+                .AddMutationType(d => d.Name("Mutation"))
+                    .AddTypeExtension<AnimalMutation>()
+                    .AddTypeExtension<FarmMutation>()
+                .AddSubscriptionType(d => d.Name("Subscription"))
+                    .AddTypeExtension<AnimalSubscriptions>()
+                .AddType<AnimalType>()
+                .AddType<FarmType>()
+                .AddType<PersonType>()
+                .AddFiltering()
+                .AddSorting()
+                .EnableRelaySupport()
+                .AddInMemorySubscriptions()     // Subscriptions
+                .AddDataLoader<PersonByIdDataLoader>()      // DataLoaders
+                .AddDataLoader<FarmByIdDataLoader>()
+                .AddDataLoader<FarmsByPersonIdDataLoader>()
+                .AddDataLoader<AnimalByFarmIdDataLoader>()
+                .AddDataLoader<AnimalByFarmIdDataLoader>();
 
             // auth
             services.AddAuthorization();
@@ -105,13 +91,7 @@ namespace RigantiGraphQlDemo.Api
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseGraphQL();
-
-            // Add the GraphQL Playground UI to try out the GraphQL API at /
-            // Add the GraphQL Voyager UI to let you navigate your GraphQL API as a spider graph at /voyager.
-            app
-                .UsePlayground(new PathString("/"))
-                .UseVoyager(new PathString("/voyager"));
+            app.UseEndpoints(x => x.MapGraphQL("/"));
         }
     }
 }

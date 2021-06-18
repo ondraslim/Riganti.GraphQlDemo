@@ -1,6 +1,6 @@
-﻿using HotChocolate.DataLoader;
+﻿using GreenDonut;
+using HotChocolate.DataLoader;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using RigantiGraphQlDemo.Dal;
 using System;
 using System.Collections.Generic;
@@ -12,27 +12,25 @@ namespace RigantiGraphQlDemo.Api.GraphQL.DataLoaders.Animal
 {
     public class AnimalByFarmIdDataLoader : GroupedDataLoader<int, Dal.Entities.Animal>
     {
-        private readonly DbContextPool<AnimalFarmDbContext> dbContextPool;
+        private readonly IDbContextFactory<AnimalFarmDbContext> dbContextFactory;
 
-        public AnimalByFarmIdDataLoader(DbContextPool<AnimalFarmDbContext> dbContextPool)
+        public AnimalByFarmIdDataLoader(
+            IDbContextFactory<AnimalFarmDbContext> dbContextFactory,
+            IBatchScheduler batchScheduler,
+            DataLoaderOptions<int>? options = null)
+            : base(batchScheduler, options)
         {
-            this.dbContextPool = dbContextPool ?? throw new ArgumentNullException(nameof(dbContextPool));
+            this.dbContextFactory = dbContextFactory ?? throw new ArgumentNullException(nameof(dbContextFactory));
         }
 
         protected override async Task<ILookup<int, Dal.Entities.Animal>> LoadGroupedBatchAsync(
             IReadOnlyList<int> keys,
             CancellationToken cancellationToken)
         {
-            AnimalFarmDbContext dbContext = dbContextPool.Rent();
-            try
-            {
-                var animals = await dbContext.Animals.Where(f => keys.Contains(f.FarmId)).ToListAsync(cancellationToken);
-                return animals.ToLookup(t => t.FarmId);
-            }
-            finally
-            {
-                dbContextPool.Return(dbContext);
-            }
+            await using var dbContext = dbContextFactory.CreateDbContext();
+         
+            var animals = await dbContext.Animals.Where(f => keys.Contains(f.FarmId)).ToListAsync(cancellationToken);
+            return animals.ToLookup(t => t.FarmId);
         }
     }
 }

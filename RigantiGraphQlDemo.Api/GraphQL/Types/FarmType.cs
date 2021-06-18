@@ -1,8 +1,9 @@
 ﻿using HotChocolate.Resolvers;
 using HotChocolate.Types;
-using HotChocolate.Types.Relay;
+using RigantiGraphQlDemo.Api.Extensions;
 using RigantiGraphQlDemo.Api.GraphQL.DataLoaders.Farm;
 using RigantiGraphQlDemo.Api.GraphQL.Resolvers;
+using RigantiGraphQlDemo.Dal;
 using RigantiGraphQlDemo.Dal.Entities;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Types
@@ -12,14 +13,14 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Types
         protected override void Configure(IObjectTypeDescriptor<Farm> descriptor)
         {
             descriptor
-                .AsNode()
+                .ImplementsNode()
                 .IdField(x => x.Id)
-                .NodeResolver((context, id) =>
-                    context.DataLoader<FarmByIdDataLoader>().LoadAsync(id, context.RequestAborted));
+                .ResolveNode((context, id) => 
+                    context.DataLoader<FarmByIdDataLoader>()
+                        .LoadAsync(id, context.RequestAborted));
 
             descriptor
                 .Field(x => x.Name)
-                .Type<StringType>()
                 .Description("The name of the Farm.");
 
 
@@ -30,17 +31,16 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Types
 
             descriptor
                 .Field(x => x.Person)
-                .Type<PersonType>()
                 .Description("Farm's owner.");
 
             descriptor
                 .Field(x => x.Animals)
-                .Type<ListType<AnimalType>>()
                 .UsePaging<NonNullType<AnimalType>>()
+                .ResolveWith<AnimalResolvers>(ar => ar.GetAnimalsByFarmIdsAsync(default!, default!, default))
+                .UseDbContext<AnimalFarmDbContext>()
                 .UseFiltering()
                 .UseSorting()
-                .Description("Farm's animals.")
-                .ResolveWith<AnimalResolvers>(ar => ar.GetAnimalsByFarmIdsAsync(default!, default!, default));
+                .Description("Farm's animals.");
         }
     }
 }

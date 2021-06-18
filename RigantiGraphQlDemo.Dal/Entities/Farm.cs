@@ -13,9 +13,7 @@ namespace RigantiGraphQlDemo.Dal.Entities
         [Required]
         public int PersonId { get; set; }
 
-
         public virtual Person Person { get; set; } = default!;
-
         public virtual ICollection<Animal> Animals { get; set; } = default!;
     }
 }

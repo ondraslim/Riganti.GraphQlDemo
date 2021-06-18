@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace RigantiGraphQlDemo.Api.GraphQL.Mutations
 {
-    [ExtendObjectType(Name = "Mutation")]
+    [ExtendObjectType("Mutation")]
     public class AnimalMutation
     {
         [UseApplicationDbContext]
@@ -48,7 +48,7 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Mutations
             if (animal is null)
             {
                 return new UpdateAnimalPayload(
-                    new List<UserError> { new UserError("Animal not found.", "ANIMAL_NOT_FOUND") },
+                    new List<UserError> { new("Animal not found.", "ANIMAL_NOT_FOUND") },
                     input.ClientMutationId);
             }
 
@@ -80,7 +80,7 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Mutations
             if (animal is null)
             {
                 return new DeleteAnimalPayload(
-                    new List<UserError> { new UserError("Animal not found.", "ANIMAL_NOT_FOUND") },
+                    new List<UserError> { new("Animal not found.", "ANIMAL_NOT_FOUND") },
                     input.ClientMutationId);
             }
 
@@ -101,7 +101,7 @@ namespace RigantiGraphQlDemo.Api.GraphQL.Mutations
             if (animal is null)
             {
                 return new RenameAnimalPayload(
-                    new List<UserError> { new UserError("Animal not found.", "ANIMAL_NOT_FOUND") },
+                    new List<UserError> { new("Animal not found.", "ANIMAL_NOT_FOUND") },
                     input.ClientMutationId );
             }
 
